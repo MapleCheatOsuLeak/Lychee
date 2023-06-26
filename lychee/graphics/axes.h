@@ -1,9 +1,9 @@
 #pragma once
 
-enum class axes
+enum class Axes
 {
-    none,
-    x,
-    y,
-    both
+    None,
+    X,
+    Y,
+    Both
 };

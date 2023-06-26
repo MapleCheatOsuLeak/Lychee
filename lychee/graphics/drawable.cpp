@@ -1,55 +1,55 @@
-#include "drawable.h"
+#include "Drawable.h"
 
-vector2 drawable::compute_relative_anchor_position(::anchor a) const
+Vector2 Drawable::ComputeRelativeAnchorPosition(::Anchor a) const
 {
-	if (a == custom)
-		return custom_anchor_position;
+	if (a == Custom)
+		return CustomAnchorPosition;
 
-	vector2 result;
-	
-	if (a & ax1)
-		result.x = 0.5f;
-	else if (a & ax2)
-		result.x = 1.f;
+	Vector2 result;
 
-	if (a & ay1)
-		result.y = 0.5f;
-	else if (a & ay2)
-		result.y = 1.f;
+	if (a & AX1)
+		result.X = 0.5f;
+	else if (a & AX2)
+		result.X = 1.f;
+
+	if (a & AY1)
+		result.Y = 0.5f;
+	else if (a & AY2)
+		result.Y = 1.f;
 
 	return result;
 }
 
-void drawable::draw()
+void Drawable::Draw()
 {
-	alpha = std::clamp(alpha, 0.f, 1.f);
+	Alpha = std::clamp(Alpha, 0.f, 1.f);
 
-	const vector2 parent_size = parent ? parent->draw_size : ImGui::GetIO().DisplaySize;
-	const vector2 parent_scale = parent ? parent->draw_scale : vector2(1.f, 1.f);
-	const vector2 parent_position = parent ? parent->draw_position : vector2();
-	const float parent_alpha = parent ? parent->draw_alpha : 1.f;
+	const Vector2 ParentSize = Parent ? Parent->DrawSize : ImGui::GetIO().DisplaySize;
+	const Vector2 ParentScale = Parent ? Parent->DrawScale : Vector2(1.f, 1.f);
+	const Vector2 ParentPosition = Parent ? Parent->DrawPosition : Vector2();
+	const float ParentAlpha = Parent ? Parent->DrawAlpha : 1.f;
 
-	draw_scale = scale * parent_scale;
-	draw_size = size * draw_scale;
-	draw_alpha = alpha * parent_alpha;
+	DrawScale = Scale * ParentScale;
+	DrawSize = Size * DrawScale;
+	DrawAlpha = Alpha * ParentAlpha;
 
-	if (relative_size_axes != axes::none)
+	if (RelativeSizeAxes != Axes::None)
 	{
-		switch (relative_size_axes)
+		switch (RelativeSizeAxes)
 		{
-			case axes::x:
-				draw_size = vector2(parent_size.x, draw_size.y);
+			case Axes::X:
+				DrawSize = Vector2(ParentSize.X, DrawSize.Y);
 				break;
-			case axes::y:
-				draw_size = vector2(draw_size.x, parent_size.y);
+			case Axes::Y:
+				DrawSize = Vector2(DrawSize.X, ParentSize.Y);
 				break;
-			case axes::both:
-				draw_size = parent_size;
+			case Axes::Both:
+				DrawSize = ParentSize;
 				break;
-			case axes::none:
+			case Axes::None:
 				break;
 		}
 	}
-	
-	draw_position = parent_position + position + (parent_size * compute_relative_anchor_position(anchor)) - (draw_size * compute_relative_anchor_position(origin));
+
+	DrawPosition = ParentPosition + Position + (ParentSize * ComputeRelativeAnchorPosition(Anchor)) - (DrawSize * ComputeRelativeAnchorPosition(Origin));
 }

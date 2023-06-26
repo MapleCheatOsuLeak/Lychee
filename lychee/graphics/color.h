@@ -3,52 +3,52 @@
 #include <algorithm>
 #include <cstdint>
 
-struct color
+struct Color
 {
-	uint8_t r = 255;
-	uint8_t g = 255;
-	uint8_t b = 255;
-	uint8_t a = 255;
+	uint8_t R = 255;
+	uint8_t G = 255;
+	uint8_t B = 255;
+	uint8_t A = 255;
 
-	color() = default;
+	Color() = default;
 
-	color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+	Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
 	{
-		this->r = r;
-		this->g = g;
-		this->b = b;
-		this->a = a;
+		R = r;
+		G = g;
+		B = b;
+		A = a;
 	}
 
-	color(unsigned int hex)
+	Color(unsigned int hex)
 	{
-		this->r = (hex >> 24) & 0xFF;
-		this->g = (hex >> 16) & 0xFF;
-		this->b = (hex >> 8) & 0xFF;
-		this->a = hex & 0xFF;
+		R = (hex >> 24) & 0xFF;
+		G = (hex >> 16) & 0xFF;
+		B = (hex >> 8) & 0xFF;
+		A = hex & 0xFF;
 	}
 
-	[[nodiscard]] unsigned int to_hex() const
+	[[nodiscard]] unsigned int ToHex() const
 	{
-		return ((r & 0xFF) << 24) + ((g & 0xFF) << 16) + ((b & 0xFF) << 8) + (a & 0xFF);
+		return ((R & 0xFF) << 24) + ((G & 0xFF) << 16) + ((B & 0xFF) << 8) + (A & 0xFF);
 	}
 
-	[[nodiscard]] unsigned int to_hex(float multiplicative_alpha) const
+	[[nodiscard]] unsigned int ToHex(float alpha) const
 	{
-		multiplicative_alpha = std::clamp(multiplicative_alpha, 0.f, 1.f);
+		alpha = std::clamp(alpha, 0.f, 1.f);
 
-		return ((r & 0xFF) << 24) + ((g & 0xFF) << 16) + ((b & 0xFF) << 8) + (static_cast<unsigned char>(multiplicative_alpha * static_cast<float>(a)) & 0xFF);
+		return ((R & 0xFF) << 24) + ((G & 0xFF) << 16) + ((B & 0xFF) << 8) + (static_cast<unsigned char>(alpha * static_cast<float>(A)) & 0xFF);
 	}
 
-	[[nodiscard]] unsigned int to_imgui_hex() const
+	[[nodiscard]] unsigned int ToImGuiHex() const
 	{
-		return r << 0 | g << 8 | b << 16 | a << 24;
+		return R << 0 | G << 8 | B << 16 | A << 24;
 	}
 
-	[[nodiscard]] unsigned int to_imgui_hex(float multiplicative_alpha) const
+	[[nodiscard]] unsigned int ToImGuiHex(float alpha) const
 	{
-		multiplicative_alpha = std::clamp(multiplicative_alpha, 0.f, 1.f);
+		alpha = std::clamp(alpha, 0.f, 1.f);
 
-		return r << 0 | g << 8 | b << 16 | static_cast<unsigned char>(multiplicative_alpha * static_cast<float>(a)) << 24;
+		return R << 0 | G << 8 | B << 16 | static_cast<unsigned char>(alpha * static_cast<float>(A)) << 24;
 	}
 };

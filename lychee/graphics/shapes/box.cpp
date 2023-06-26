@@ -1,12 +1,12 @@
-#include "box.h"
+#include "Box.h"
 
 #include "imgui_internal.h"
 
-void box::draw()
+void Box::Draw()
 {
-	drawable::draw();
+	Drawable::Draw();
 
 	ImDrawList* draw_list = ImGui::GetCurrentContext()->CurrentWindow->IsFallbackWindow ? ImGui::GetBackgroundDrawList() : ImGui::GetWindowDrawList();
 
-	draw_list->AddRectFilled(draw_position.to_im_vec2(), (draw_position + draw_size).to_im_vec2(), color.to_imgui_hex(draw_alpha));
+	draw_list->AddRectFilled(DrawPosition.ToImVec2(), (DrawPosition + DrawSize).ToImVec2(), Color.ToImGuiHex(DrawAlpha));
 }

@@ -3,26 +3,26 @@
 /**
  * \brief Specifies an anchor or origin point from the standard 9 points on a rectangle.
  */
-enum anchor : unsigned int
+enum Anchor : unsigned int
 {
-    ay0 = 1,
-    ay1 = 1 << 1,
-    ay2 = 1 << 2,
-    ax0 = 1 << 3,
-    ax1 = 1 << 4,
-    ax2 = 1 << 5,
+    AY0 = 1,
+    AY1 = 1 << 1,
+    AY2 = 1 << 2,
+    AX0 = 1 << 3,
+    AX1 = 1 << 4,
+    AX2 = 1 << 5,
 
-    top_left = 1 | (1 << 3),
-    top_center = 1 | (1 << 4),
-    top_right = 1 | (1 << 5),
+    TopLeft = 1 | (1 << 3),
+    TopCenter = 1 | (1 << 4),
+    TopRight = 1 | (1 << 5),
 
-    center_left = (1 << 1) | (1 << 3),
-    center = (1 << 1) | (1 << 4),
-    center_right = (1 << 1) | (1 << 5),
+    CenterLeft = (1 << 1) | (1 << 3),
+    Center = (1 << 1) | (1 << 4),
+    CenterRight = (1 << 1) | (1 << 5),
 
-    bottom_left = (1 << 2) | (1 << 3),
-    bottom_center = (1 << 2) | (1 << 4),
-    bottom_right = (1 << 2) | (1 << 5),
+    BottomLeft = (1 << 2) | (1 << 3),
+    BottomCenter = (1 << 2) | (1 << 4),
+    BottomRight = (1 << 2) | (1 << 5),
 
-    custom = 1 << 6
+    Custom = 1 << 6
 };

@@ -1,17 +1,17 @@
 #pragma once
 
-#include "../drawable.h"
+#include "../Drawable.h"
 
 /**
  * \brief A simple circle.
  */
-class circle final : public drawable
+class Circle final : public Drawable
 {
 public:
 	/**
 	 * \brief Circle radius. Drawable size is ignored.
 	 */
-	float radius = 0.f;
+	float Radius = 0.f;
 
-	void draw() override;
+	void Draw() override;
 };

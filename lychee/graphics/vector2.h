@@ -4,132 +4,132 @@
 
 #include "imgui.h"
 
-struct vector2
+struct Vector2
 {
-	float x = 0.f;
-	float y = 0.f;
+	float X = 0.f;
+	float Y = 0.f;
 
-	vector2() = default;
+	Vector2() = default;
 
-	vector2(float x, float y)
+	Vector2(float x, float y)
 	{
-		this->x = x;
-		this->y = y;
+		X = x;
+		Y = y;
 	}
 
-	vector2(ImVec2 im_vec2)
+	Vector2(ImVec2 imVec2)
 	{
-		this->x = im_vec2.x;
-		this->y = im_vec2.y;
+		X = imVec2.x;
+		Y = imVec2.y;
 	}
 
-	[[nodiscard]] ImVec2 to_im_vec2() const
+	[[nodiscard]] ImVec2 ToImVec2() const
 	{
-		return {x, y};
+		return { X, Y };
 	}
 
-	[[nodiscard]] float length() const
+	[[nodiscard]] float Length() const
 	{
-		return sqrt(x * x + y * y);
+		return sqrt(X * X + Y * Y);
 	}
 
-	[[nodiscard]] float length_squared() const
+	[[nodiscard]] float LengthSquared() const
 	{
-		return x * x + y * y;
+		return X * X + Y * Y;
 	}
 
-	[[nodiscard]] float dot(vector2 v2) const
+	[[nodiscard]] float Dot(Vector2 v2) const
 	{
-		return x * v2.x + y * v2.y;
+		return X * v2.X + Y * v2.Y;
 	}
 
-	[[nodiscard]] float distance(vector2 v2) const
+	[[nodiscard]] float Distance(Vector2 v2) const
 	{
-		const float dx = x - v2.x;
-		const float dy = y - v2.y;
+		const float dx = X - v2.X;
+		const float dy = Y - v2.Y;
 
 		return sqrtf(dx * dx + dy * dy);
 	}
 
-	[[nodiscard]] float distance_squared(vector2 v2) const
+	[[nodiscard]] float DistanceSquared(Vector2 v2) const
 	{
-		const float dx = x - v2.x;
-		const float dy = y - v2.y;
+		const float dx = X - v2.X;
+		const float dy = Y - v2.Y;
 
 		return dx * dx + dy * dy;
 	}
 
-	vector2& operator=(const vector2& v2)
+	Vector2& operator=(const Vector2& v2)
 	{
 		if (this != &v2)
 		{
-			x = v2.x;
-			y = v2.y;
+			X = v2.X;
+			Y = v2.Y;
 		}
 
 		return *this;
 	}
 
-	vector2 operator+(const vector2& v2) const
+	Vector2 operator+(const Vector2& v2) const
 	{
-		return {x + v2.x, y + v2.y};
+		return { X + v2.X, Y + v2.Y };
 	}
 
-	vector2& operator+=(const vector2& v2)
+	Vector2& operator+=(const Vector2& v2)
 	{
-		x += v2.x;
-		y += v2.y;
+		X += v2.X;
+		Y += v2.Y;
 
 		return *this;
 	}
 
-	vector2 operator-(const vector2& v2) const
+	Vector2 operator-(const Vector2& v2) const
 	{
-		return {x - v2.x, y - v2.y};
+		return { X - v2.X, Y - v2.Y };
 	}
 
-	vector2& operator-=(const vector2& v2)
+	Vector2& operator-=(const Vector2& v2)
 	{
-		x -= v2.x;
-		y -= v2.y;
+		X -= v2.X;
+		Y -= v2.Y;
 
 		return *this;
 	}
 
-	vector2 operator*(const vector2& v2) const
+	Vector2 operator*(const Vector2& v2) const
 	{
-		return { x * v2.x, y * v2.y };
+		return { X * v2.X, Y * v2.Y };
 	}
 
-	vector2& operator*=(const vector2& v2)
+	Vector2& operator*=(const Vector2& v2)
 	{
-		x *= v2.x;
-		y *= v2.y;
+		X *= v2.X;
+		Y *= v2.Y;
 
 		return *this;
 	}
 
-	vector2 operator/(const vector2& v2) const
+	Vector2 operator/(const Vector2& v2) const
 	{
-		return { x / v2.x, y / v2.y };
+		return { X / v2.X, Y / v2.Y };
 	}
 
-	vector2& operator/=(const vector2& v2)
+	Vector2& operator/=(const Vector2& v2)
 	{
-		x /= v2.x;
-		y /= v2.y;
+		X /= v2.X;
+		X /= v2.X;
 
 		return *this;
 	}
 
-	bool operator==(const vector2& v2) const
+	bool operator==(const Vector2& v2) const
 	{
 		constexpr float epsilon = 0.00001f;
 
-		return std::abs(x - v2.x) < epsilon && std::abs(y - v2.y) < epsilon;
+		return std::abs(X - v2.X) < epsilon && std::abs(Y - v2.Y) < epsilon;
 	}
 
-	bool operator!=(const vector2& v2) const
+	bool operator!=(const Vector2& v2) const
 	{
 		return !(*this == v2);
 	}
