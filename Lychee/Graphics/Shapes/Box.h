@@ -5,7 +5,7 @@
 /**
  * \brief A simple rectangular box.
  */
-class box final : public drawable
+class Box final : public Drawable
 {
-	void draw() override;
+    void Draw() override;
 };
