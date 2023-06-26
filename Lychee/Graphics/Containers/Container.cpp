@@ -6,9 +6,9 @@ void Container::Draw()
 {
     Drawable::Draw();
 
-    const bool should_begin_child = !ImGui::GetCurrentContext()->CurrentWindow->IsFallbackWindow;
+    const bool shouldBeginChild = !ImGui::GetCurrentContext()->CurrentWindow->IsFallbackWindow;
 
-    if (should_begin_child)
+    if (shouldBeginChild)
     {
         ImGui::SetNextWindowPos(DrawPosition.ToImVec2());
         ImGui::BeginChild("a", DrawSize.ToImVec2(), false, ImGuiWindowFlags_NoBackground);
@@ -19,7 +19,7 @@ void Container::Draw()
         drawable->Draw();
     }
 
-    if (should_begin_child)
+    if (shouldBeginChild)
     {
         ImGui::EndChild();
     }
