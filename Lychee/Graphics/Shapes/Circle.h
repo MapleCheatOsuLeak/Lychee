@@ -8,10 +8,10 @@
 class Circle final : public Drawable
 {
 public:
-	/**
-	 * \brief Circle radius. Drawable size is ignored.
-	 */
-	float Radius = 0.f;
+    /**
+     * \brief Circle radius. Drawable size is ignored.
+     */
+    float Radius = 0.f;
 
-	void Draw() override;
+    void Draw() override;
 };
