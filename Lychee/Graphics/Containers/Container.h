@@ -23,5 +23,5 @@ public:
 	 * \brief Adds a new child to this container.
 	 * \param drawable Drawable to be added.
 	 */
-	void add(drawable* drawable);
+	void Add(Drawable* drawable);
 };
