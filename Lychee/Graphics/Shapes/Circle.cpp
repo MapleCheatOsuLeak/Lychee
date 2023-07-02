@@ -1,14 +1,10 @@
 #include "Circle.h"
 
-#include "imgui_internal.h"
-
-void Circle::Draw()
+void Circle::Draw(ImDrawList* drawList)
 {
     Size = Vector2(Radius * 2, Radius * 2);
 
-    Drawable::Draw();
-
-    ImDrawList* drawList = ImGui::GetCurrentContext()->CurrentWindow->IsFallbackWindow ? ImGui::GetBackgroundDrawList() : ImGui::GetWindowDrawList();
+    Drawable::Draw(drawList);
 
     drawList->AddCircleFilled((DrawPosition + (DrawSize / Vector2(2.f, 2.f))).ToImVec2(),
                                (RelativeSizeAxes == Axes::X ? DrawSize.X : DrawSize.Y) / 2.f, Color.ToImGuiHex(DrawAlpha));

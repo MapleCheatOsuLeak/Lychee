@@ -13,7 +13,7 @@ class Container : public Drawable
     std::vector<Drawable*> m_children;
 
 public:
-    void Draw() override;
+    void Draw(ImDrawList* drawList) override;
     /**
      * \brief Assigns a new children list to this container.
      * Calling this method will delete all existing children of this container.

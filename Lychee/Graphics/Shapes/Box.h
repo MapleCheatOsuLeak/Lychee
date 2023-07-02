@@ -7,5 +7,5 @@
  */
 class Box final : public Drawable
 {
-    void Draw() override;
+    void Draw(ImDrawList* drawList) override;
 };

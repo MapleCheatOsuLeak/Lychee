@@ -2,9 +2,9 @@
 
 #include "imgui_internal.h"
 
-void Container::Draw()
+void Container::Draw(ImDrawList* drawList)
 {
-    Drawable::Draw();
+    Drawable::Draw(drawList);
 
     const bool shouldBeginChild = !ImGui::GetCurrentContext()->CurrentWindow->IsFallbackWindow;
 
@@ -16,7 +16,7 @@ void Container::Draw()
 
     for (Drawable* drawable : m_children)
     {
-        drawable->Draw();
+        drawable->Draw(shouldBeginChild ? ImGui::GetWindowDrawList() : drawList);
     }
 
     if (shouldBeginChild)

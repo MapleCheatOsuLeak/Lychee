@@ -13,5 +13,5 @@ public:
      */
     float Radius = 0.f;
 
-    void Draw() override;
+    void Draw(ImDrawList* drawList) override;
 };
