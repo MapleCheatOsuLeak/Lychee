@@ -13,6 +13,12 @@ class Container : public Drawable
     std::vector<Drawable*> m_children;
 
 public:
+    /**
+     * \brief Controls which axes are automatically sized to this Container's maximum children size.
+     * Any sizing manipulations with the Axes of AutoSizeAxes will either be discarded or cause an exception.
+     */
+    Axes AutoSizeAxes = Axes::None;
+
     void Draw(ImDrawList* drawList) override;
     /**
      * \brief Assigns a new children list to this container.
