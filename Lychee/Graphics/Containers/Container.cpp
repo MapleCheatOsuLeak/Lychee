@@ -13,6 +13,9 @@ void Container::Draw(ImDrawList* drawList)
         ImGui::SetNextWindowPos(DrawPosition.ToImVec2());
         ImGui::BeginChild("a", DrawSize.ToImVec2(), false, ImGuiWindowFlags_NoBackground);
     }
+    else
+        // no rounded clipping cuz ocornut is gay :')
+        drawList->PushClipRect(DrawPosition.ToImVec2(), (DrawPosition + DrawSize).ToImVec2());
 
     for (Drawable* drawable : m_children)
     {
@@ -20,9 +23,9 @@ void Container::Draw(ImDrawList* drawList)
     }
 
     if (shouldBeginChild)
-    {
         ImGui::EndChild();
-    }
+    else
+        drawList->PopClipRect();
 }
 
 void Container::SetChildren(const std::vector<Drawable*>& children)
