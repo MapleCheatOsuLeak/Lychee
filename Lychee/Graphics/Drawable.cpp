@@ -2,19 +2,19 @@
 
 Vector2 Drawable::ComputeRelativeAnchorPosition(::Anchor a) const
 {
-    if (a == Custom)
+    if (a == Anchor::Custom)
         return CustomAnchorPosition;
 
     Vector2 result;
 
-    if (a & AX1)
+    if ((a & Anchor::AX1) != Anchor::None)
         result.X = 0.5f;
-    else if (a & AX2)
+    else if ((a & Anchor::AX2) != Anchor::None)
         result.X = 1.f;
 
-    if (a & AY1)
+    if ((a & Anchor::AY1) != Anchor::None)
         result.Y = 0.5f;
-    else if (a & AY2)
+    else if ((a & Anchor::AY2) != Anchor::None)
         result.Y = 1.f;
 
     return result;

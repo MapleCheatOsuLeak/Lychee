@@ -62,7 +62,7 @@ public:
     /**
      * \brief Specifies where origin of this drawable is attached to the parent.
      */
-    Anchor Anchor = TopLeft;
+    Anchor Anchor = Anchor::TopLeft;
     /**
      * \brief Specifies where anchor position of this drawable is.
      */
@@ -71,7 +71,7 @@ public:
     /**
      * \brief The origin of this drawable.
      */
-    ::Anchor Origin = TopLeft;
+    ::Anchor Origin = Anchor::TopLeft;
 
     /**
      * \brief Controls which axes are relatively sized to this drawable's parent size.

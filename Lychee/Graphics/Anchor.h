@@ -3,8 +3,9 @@
 /**
  * \brief Specifies an anchor or origin point from the standard 9 points on a rectangle.
  */
-enum Anchor : unsigned int
+enum class Anchor : unsigned int
 {
+    None = 0,
     AY0 = 1,
     AY1 = 1 << 1,
     AY2 = 1 << 2,
@@ -26,3 +27,8 @@ enum Anchor : unsigned int
 
     Custom = 1 << 6
 };
+
+inline Anchor operator&(Anchor a, Anchor b)
+{
+    return static_cast<Anchor>(static_cast<int>(a) & static_cast<int>(b));
+}

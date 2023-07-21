@@ -1,6 +1,6 @@
 #pragma once
 
-enum Axes : unsigned int
+enum class Axes : unsigned int
 {
     None = 0,
     X = 1,
