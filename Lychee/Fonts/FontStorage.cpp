@@ -8,7 +8,7 @@ FontStorage::~FontStorage()
     fonts.clear();
 }
 
-void FontStorage::AddFromFile(const std::string& name, std::string filePath)
+void FontStorage::AddFromFile(const std::string& name, const std::string& filePath)
 {
     const ImGuiIO& io = ImGui::GetIO();
 
@@ -18,7 +18,7 @@ void FontStorage::AddFromFile(const std::string& name, std::string filePath)
 
     ImFont* smallFont = io.Fonts->AddFontFromFileTTF(filePath.c_str(), 24, &config);
     ImFont* bigFont = io.Fonts->AddFontFromFileTTF(filePath.c_str(), 72, &config);
-
+    
     fonts[name] = new Font(smallFont, bigFont);
 }
 

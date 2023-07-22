@@ -13,7 +13,7 @@ public:
     FontStorage() = default;
     ~FontStorage();
 
-    void AddFromFile(const std::string& name, std::string filePath);
+    void AddFromFile(const std::string& name, const std::string& filePath);
     void AddFromMemory(const std::string& name, const void* data, int size);
     Font* Get(const std::string& name);
 };
