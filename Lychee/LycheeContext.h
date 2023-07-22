@@ -2,6 +2,7 @@
 
 #include "Layer.h"
 #include "Renderer.h"
+#include "Fonts/FontStorage.h"
 #include "Graphics/Drawable.h"
 
 #include <unordered_map>
@@ -13,9 +14,13 @@ class LycheeContext
     Renderer renderer;
     HWND window;
 
+    FontStorage fontStorage = FontStorage();
+
     std::unordered_map<Layer, std::vector<Drawable*>> layers;
 public:
     LycheeContext(Renderer renderer, HWND window);
+
+    FontStorage* GetFontStorage();
 
     void Render();
     void Add(Layer layer, Drawable* drawable);

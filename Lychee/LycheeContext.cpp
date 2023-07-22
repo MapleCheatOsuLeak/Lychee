@@ -1,7 +1,7 @@
 #include "LycheeContext.h"
 
-#include "stb_image.h"
 #include "backends/imgui_impl_opengl3.h"
+#include "stb_image.h"
 
 #include <stdexcept>
 
@@ -14,6 +14,7 @@ LycheeContext::LycheeContext(Renderer renderer, HWND window)
     this->window = window;
 
     ImGui::CreateContext();
+    ImGui::GetIO().Fonts->AddFontDefault();
 
     if (renderer == Renderer::OpenGL3)
     {
@@ -28,6 +29,11 @@ LycheeContext::LycheeContext(Renderer renderer, HWND window)
     layers[Layer::Background] = {};
     layers[Layer::Foreground] = {};
     layers[Layer::Overlay] = {};
+}
+
+FontStorage* LycheeContext::GetFontStorage()
+{
+    return &fontStorage;
 }
 
 void LycheeContext::Render()
