@@ -10,15 +10,15 @@ LycheeContext::LycheeContext(Renderer renderer, HWND window)
     if (renderer == Renderer::Direct3D9)
         throw std::runtime_error("Direct3D9 not supported."); // todo: add d3d9 support
 
-    this->renderer = renderer;
-    this->window = window;
+    m_renderer = renderer;
+    m_window = window;
 
     ImGui::CreateContext();
     ImGui::GetIO().Fonts->AddFontDefault();
 
     if (renderer == Renderer::OpenGL3)
     {
-        stbi_set_flip_vertically_on_load(0);
+        // stbi_set_flip_vertically_on_load(0);
         ImGui_ImplOpenGL3_Init();
     }
 
@@ -31,14 +31,14 @@ LycheeContext::LycheeContext(Renderer renderer, HWND window)
     layers[Layer::Overlay] = {};
 }
 
-FontStorage* LycheeContext::GetFontStorage()
+FontStorage& LycheeContext::GetFontStorage()
 {
-    return &fontStorage;
+    return fontStorage;
 }
 
 void LycheeContext::Render()
 {
-    if (renderer == Renderer::OpenGL3)
+    if (m_renderer == Renderer::OpenGL3)
     {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui::NewFrame();
@@ -56,7 +56,7 @@ void LycheeContext::Render()
     for (Drawable* drawable : layers[Layer::Overlay])
         drawable->Draw(ImGui::GetForegroundDrawList());
 
-    if (renderer == Renderer::OpenGL3)
+    if (m_renderer == Renderer::OpenGL3)
     {
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

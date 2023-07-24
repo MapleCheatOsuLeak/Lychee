@@ -11,8 +11,8 @@
 
 class LycheeContext
 {
-    Renderer renderer;
-    HWND window;
+    Renderer m_renderer;
+    HWND m_window;
 
     FontStorage fontStorage = FontStorage();
 
@@ -20,7 +20,7 @@ class LycheeContext
 public:
     LycheeContext(Renderer renderer, HWND window);
 
-    FontStorage* GetFontStorage();
+    FontStorage& GetFontStorage();
 
     void Render();
     void Add(Layer layer, Drawable* drawable);
