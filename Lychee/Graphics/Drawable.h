@@ -88,5 +88,5 @@ public:
     /**
      * \brief Renders this drawable. All low-level (ImGUI) rendering and update logic should be handled in this method.
      */
-    virtual void Draw(ImDrawList* drawList);
+    virtual void Draw();
 };

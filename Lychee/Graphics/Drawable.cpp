@@ -20,7 +20,7 @@ Vector2 Drawable::ComputeRelativeAnchorPosition(::Anchor a) const
     return result;
 }
 
-void Drawable::Draw(ImDrawList* drawList)
+void Drawable::Draw()
 {
     Alpha = std::clamp(Alpha, 0.f, 1.f);
 

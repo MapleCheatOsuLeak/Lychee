@@ -12,5 +12,5 @@ public:
     Font* Font = nullptr;
     int FontSize = 16;
 
-    void Draw(ImDrawList* drawList) override;
+    void Draw() override;
 };

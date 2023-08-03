@@ -1,7 +1,9 @@
 #include "SpriteText.h"
 
-void SpriteText::Draw(ImDrawList* drawList)
+void SpriteText::Draw()
 {
+    ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+
     float oldScale = 1.f;
     if (!Font)
     {
@@ -14,7 +16,7 @@ void SpriteText::Draw(ImDrawList* drawList)
 
     Size = ImGui::CalcTextSize(Text.c_str());
 
-    Drawable::Draw(drawList);
+    Drawable::Draw();
 
     ImGui::PopFont();
 

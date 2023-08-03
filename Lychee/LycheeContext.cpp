@@ -13,7 +13,7 @@ FontStorage& LycheeContext::GetFontStorage()
 void LycheeContext::Render()
 {
     for (Drawable* drawable : m_content)
-        drawable->Draw(ImGui::GetBackgroundDrawList());
+        drawable->Draw();
 }
 
 void LycheeContext::Add(Drawable* drawable)

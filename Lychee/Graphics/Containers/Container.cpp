@@ -2,10 +2,10 @@
 
 #include <stdexcept>
 
-#include "imgui_internal.h"
-
-void Container::Draw(ImDrawList* drawList)
+void Container::Draw()
 {
+    ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+
     if (AutoSizeAxes != Axes::None)
     {
         if ((RelativeSizeAxes & AutoSizeAxes) != Axes::None)
@@ -40,28 +40,17 @@ void Container::Draw(ImDrawList* drawList)
         }
     }
 
-    Drawable::Draw(drawList);
+    Drawable::Draw();
 
-    const bool shouldBeginChild = !ImGui::GetCurrentContext()->CurrentWindow->IsFallbackWindow;
-
-    if (shouldBeginChild)
-    {
-        ImGui::SetNextWindowPos(DrawPosition.ToImVec2());
-        ImGui::BeginChild("a", DrawSize.ToImVec2(), false, ImGuiWindowFlags_NoBackground);
-    }
-    else
-        // no rounded clipping cuz ocornut is gay :')
-        drawList->PushClipRect(DrawPosition.ToImVec2(), (DrawPosition + DrawSize).ToImVec2());
+    // no rounded clipping cuz ocornut is gay :')
+    drawList->PushClipRect(DrawPosition.ToImVec2(), (DrawPosition + DrawSize).ToImVec2());
 
     for (Drawable* drawable : m_children)
     {
-        drawable->Draw(shouldBeginChild ? ImGui::GetWindowDrawList() : drawList);
+        drawable->Draw();
     }
 
-    if (shouldBeginChild)
-        ImGui::EndChild();
-    else
-        drawList->PopClipRect();
+    drawList->PopClipRect();
 }
 
 void Container::SetChildren(const std::vector<Drawable*>& children)

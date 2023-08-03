@@ -19,7 +19,7 @@ public:
      */
     Axes AutoSizeAxes = Axes::None;
 
-    void Draw(ImDrawList* drawList) override;
+    void Draw() override;
     /**
      * \brief Assigns a new children list to this container.
      * Calling this method will delete all existing children of this container.
