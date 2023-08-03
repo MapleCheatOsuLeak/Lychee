@@ -26,8 +26,10 @@ void Drawable::Draw(ImDrawList* drawList)
 
     const Vector2 parentSize = Parent ? Parent->DrawSize : ImGui::GetIO().DisplaySize;
     const Vector2 parentScale = Parent ? Parent->DrawScale : Vector2(1.f, 1.f);
-    const Vector2 parentPosition = Parent ? Parent->DrawPosition : Vector2();
+    const Vector2 parentDrawPosition = Parent ? Parent->DrawPosition : Vector2();
     const float parentAlpha = Parent ? Parent->DrawAlpha : 1.f;
+
+    RelativePosition = parentSize * ComputeRelativeAnchorPosition(Anchor) - DrawSize * ComputeRelativeAnchorPosition(Origin) + Position;
 
     DrawScale = Scale * parentScale;
     DrawSize = Size * DrawScale;
@@ -51,6 +53,5 @@ void Drawable::Draw(ImDrawList* drawList)
         }
     }
 
-    DrawPosition =
-        parentPosition + Position + (parentSize * ComputeRelativeAnchorPosition(Anchor)) - (DrawSize * ComputeRelativeAnchorPosition(Origin));
+    DrawPosition = parentDrawPosition + RelativePosition;
 }

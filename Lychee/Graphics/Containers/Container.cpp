@@ -53,7 +53,6 @@ void Container::Draw(ImDrawList* drawList)
         // no rounded clipping cuz ocornut is gay :')
         drawList->PushClipRect(DrawPosition.ToImVec2(), (DrawPosition + DrawSize).ToImVec2());
 
-
     for (Drawable* drawable : m_children)
     {
         drawable->Draw(shouldBeginChild ? ImGui::GetWindowDrawList() : drawList);

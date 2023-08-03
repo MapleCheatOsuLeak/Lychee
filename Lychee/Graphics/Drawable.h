@@ -23,7 +23,11 @@ public:
      */
     Vector2 Position;
     /**
-     * \brief Absolute position of this drawable in its parent's coordinate system. Absolute screen position if parent is null.
+     * \brief Relative position of this drawable in its parent's coordinate system. Absolute screen position if parent is null.
+     */
+    Vector2 RelativePosition;
+    /**
+     * \brief Absolute screen position of this drawable.
      */
     Vector2 DrawPosition;
 
