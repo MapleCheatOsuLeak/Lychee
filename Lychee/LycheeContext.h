@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Layer.h"
 #include "Fonts/FontStorage.h"
 #include "Graphics/Drawable.h"
 
@@ -11,13 +10,13 @@ class LycheeContext
 {
     FontStorage fontStorage = FontStorage();
 
-    std::unordered_map<Layer, std::vector<Drawable*>> layers;
+    std::vector<Drawable*> m_content = {};
 public:
     LycheeContext();
 
     FontStorage& GetFontStorage();
 
     void Render();
-    void Add(Layer layer, Drawable* drawable);
-    void AddRange(Layer layer, std::initializer_list<Drawable*> drawables);
+    void Add(Drawable* drawable);
+    void AddRange(std::initializer_list<Drawable*> drawables);
 };
