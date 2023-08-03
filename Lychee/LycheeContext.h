@@ -1,24 +1,19 @@
 #pragma once
 
 #include "Layer.h"
-#include "Renderer.h"
 #include "Fonts/FontStorage.h"
 #include "Graphics/Drawable.h"
 
 #include <unordered_map>
 #include <vector>
-#include <wtypes.h>
 
 class LycheeContext
 {
-    Renderer m_renderer;
-    HWND m_window;
-
     FontStorage fontStorage = FontStorage();
 
     std::unordered_map<Layer, std::vector<Drawable*>> layers;
 public:
-    LycheeContext(Renderer renderer, HWND window);
+    LycheeContext();
 
     FontStorage& GetFontStorage();
 
