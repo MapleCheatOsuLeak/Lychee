@@ -55,3 +55,8 @@ void Drawable::Draw()
 
     DrawPosition = parentDrawPosition + RelativePosition;
 }
+
+void Drawable::UpdateInput(const MouseState& mouseState, const KeyboardState& keyboardState)
+{
+    // todo: implement input callbacks
+}

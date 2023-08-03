@@ -4,6 +4,8 @@
 #include "Axes.h"
 #include "Color.h"
 #include "Vector2.h"
+#include "../Input/MouseState.h"
+#include "../Input/KeyboardState.h"
 
 /**
  * \brief Drawables are the basic components in Lychee. Anything that is visible or interactable has to be a drawable.
@@ -89,4 +91,5 @@ public:
      * \brief Renders this drawable. All low-level (ImGUI) rendering and update logic should be handled in this method.
      */
     virtual void Draw();
+    void UpdateInput(const MouseState& mouseState, const KeyboardState& keyboardState);
 };

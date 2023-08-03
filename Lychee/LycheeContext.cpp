@@ -10,10 +10,15 @@ FontStorage& LycheeContext::GetFontStorage()
     return fontStorage;
 }
 
-void LycheeContext::Render()
+void LycheeContext::Draw()
 {
+    inputManager.Update();
+
     for (Drawable* drawable : m_content)
+    {
         drawable->Draw();
+        drawable->UpdateInput(inputManager.GetMouseState(), inputManager.GetKeyboardState());
+    }
 }
 
 void LycheeContext::Add(Drawable* drawable)
