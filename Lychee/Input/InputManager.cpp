@@ -2,6 +2,17 @@
 
 #include "imgui.h"
 
+InputManager::InputManager()
+{
+    const ImGuiIO& io = ImGui::GetIO();
+
+    m_previousMousePosition = io.MousePos;
+    m_previousScrollValue = io.MouseWheel;
+    memcpy(m_previousPressedButtons, io.MouseDown, 5);
+
+    memcpy(m_previousPressedKeys, io.KeysDown, 512);
+}
+
 void InputManager::Update()
 {
     const ImGuiIO& io = ImGui::GetIO();
@@ -10,6 +21,8 @@ void InputManager::Update()
     m_currentKeyboardState = KeyboardState();
 
     m_currentMouseState.Position = io.MousePos;
+    m_currentMouseState.PreviousPosition = m_previousMousePosition;
+    m_currentMouseState.PositionDelta = m_currentMouseState.Position - m_currentMouseState.PreviousPosition;
 
     for (int button = 0; button < 5; button++)
     {
@@ -20,6 +33,8 @@ void InputManager::Update()
     }
 
     m_currentMouseState.ScrollValue = io.MouseWheel;
+    m_currentMouseState.PreviousScrollValue = m_previousScrollValue;
+    m_currentMouseState.ScrollDelta = io.MouseWheel - m_previousScrollValue;
 
     for (int key = 0; key < 512; key++)
     {
@@ -29,7 +44,10 @@ void InputManager::Update()
             m_currentKeyboardState.ReleasedKeys.push_back(key);
     }
 
+    m_previousMousePosition = io.MousePos;
+    m_previousScrollValue = io.MouseWheel;
     memcpy(m_previousPressedButtons, io.MouseDown, 5);
+
     memcpy(m_previousPressedKeys, io.KeysDown, 512);
 }
 

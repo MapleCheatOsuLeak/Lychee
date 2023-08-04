@@ -58,5 +58,34 @@ void Drawable::Draw()
 
 void Drawable::UpdateInput(const MouseState& mouseState, const KeyboardState& keyboardState)
 {
-    // todo: implement input callbacks
+    const bool wasHovered = IsHovered;
+
+    IsHovered = mouseState.Position.X > DrawPosition.X && mouseState.Position.X < DrawPosition.X + DrawSize.X &&
+                mouseState.Position.Y > DrawPosition.Y && mouseState.Position.Y < DrawPosition.Y + DrawSize.Y;
+
+    if (IsHovered)
+    {
+        for (const MouseButtons& button : mouseState.PressedButtons)
+            OnMouseButtonDown(button);
+
+        for (const MouseButtons& button : mouseState.ReleasedButtons)
+            OnMouseButtonUp(button);
+
+	if (mouseState.PositionDelta.Length() > 0.f)
+            OnMouseMove(mouseState.Position, mouseState.PreviousPosition, mouseState.PositionDelta);
+
+	if (mouseState.ScrollDelta > 0.f)
+            OnScroll(mouseState.ScrollValue, mouseState.PreviousScrollValue, mouseState.ScrollDelta);
+    }
+
+    if (!wasHovered && IsHovered)
+        OnHover();
+    else if (wasHovered && !IsHovered)
+        OnHoverLost();
+
+    for (const int& pressedKey : keyboardState.PressedKeys)
+        OnKeyDown(pressedKey);
+
+    for (const int& releasedKey : keyboardState.ReleasedKeys)
+        OnKeyUp(releasedKey);
 }

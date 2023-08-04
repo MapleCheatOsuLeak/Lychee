@@ -92,4 +92,15 @@ public:
      */
     virtual void Draw();
     void UpdateInput(const MouseState& mouseState, const KeyboardState& keyboardState);
+
+    bool IsHovered = false;
+
+    virtual void OnMouseButtonDown(MouseButtons button) {}
+    virtual void OnMouseButtonUp(MouseButtons button) {}
+    virtual void OnMouseMove(Vector2 position, Vector2 previousPosition, Vector2 positionDelta) {}
+    virtual void OnScroll(float scrollValue, float previousScrollValue, float scrollDelta) {}
+    virtual void OnHover() {}
+    virtual void OnHoverLost() {}
+    virtual void OnKeyDown(int key) {}
+    virtual void OnKeyUp(int key) {}
 };
