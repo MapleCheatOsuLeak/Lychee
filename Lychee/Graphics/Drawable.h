@@ -91,7 +91,7 @@ public:
      * \brief Renders this drawable. All low-level (ImGUI) rendering and update logic should be handled in this method.
      */
     virtual void Draw();
-    void UpdateInput(const MouseState& mouseState, const KeyboardState& keyboardState);
+    virtual void UpdateInput(const MouseState& mouseState, const KeyboardState& keyboardState);
 
     bool IsHovered = false;
 

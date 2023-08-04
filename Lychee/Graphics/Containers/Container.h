@@ -13,6 +13,8 @@ class Container : public Drawable
     std::vector<Drawable*> m_children;
 
 public:
+    bool PassThroughInput = true;
+
     /**
      * \brief Controls which axes are automatically sized to this Container's maximum children size.
      * Any sizing manipulations with the Axes of AutoSizeAxes will either be discarded or cause an exception.
@@ -20,6 +22,7 @@ public:
     Axes AutoSizeAxes = Axes::None;
 
     void Draw() override;
+    void UpdateInput(const MouseState& mouseState, const KeyboardState& keyboardState) override;
     /**
      * \brief Assigns a new children list to this container.
      * Calling this method will delete all existing children of this container.

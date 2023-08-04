@@ -2,7 +2,7 @@
 
 LycheeContext::LycheeContext()
 {
-    ImGui::GetIO().Fonts->AddFontDefault();
+    //ImGui::GetIO().Fonts->AddFontDefault();
 }
 
 FontStorage& LycheeContext::GetFontStorage()
@@ -16,8 +16,8 @@ void LycheeContext::Draw()
 
     for (Drawable* drawable : m_content)
     {
-        drawable->Draw();
         drawable->UpdateInput(inputManager.GetMouseState(), inputManager.GetKeyboardState());
+        drawable->Draw();
     }
 }
 

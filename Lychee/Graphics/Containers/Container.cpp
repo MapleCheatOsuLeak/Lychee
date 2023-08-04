@@ -53,6 +53,15 @@ void Container::Draw()
     drawList->PopClipRect();
 }
 
+void Container::UpdateInput(const MouseState& mouseState, const KeyboardState& keyboardState)
+{
+    Drawable::UpdateInput(mouseState, keyboardState);
+
+    if (PassThroughInput)
+        for (Drawable* drawable : m_children)
+            drawable->UpdateInput(mouseState, keyboardState);
+}
+
 void Container::SetChildren(const std::vector<Drawable*>& children)
 {
     for (const Drawable* drawable : m_children)
