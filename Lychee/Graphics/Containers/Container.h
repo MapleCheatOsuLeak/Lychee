@@ -10,7 +10,11 @@
  */
 class Container : public Drawable
 {
+    DependencyContainer m_dependencyContainer;
     std::vector<Drawable*> m_children;
+
+protected:
+    void LateLoad(DependencyContainer& dependencyContainer) override;
 
 public:
     bool PassThroughInput = true;
@@ -21,8 +25,9 @@ public:
      */
     Axes AutoSizeAxes = Axes::None;
 
+    void Update(bool handleInput) override;
     void Draw() override;
-    void UpdateInput(const MouseState& mouseState, const KeyboardState& keyboardState) override;
+
     /**
      * \brief Assigns a new children list to this container.
      * Calling this method will delete all existing children of this container.

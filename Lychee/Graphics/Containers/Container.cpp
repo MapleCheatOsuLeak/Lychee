@@ -2,10 +2,16 @@
 
 #include <stdexcept>
 
-void Container::Draw()
+void Container::LateLoad(DependencyContainer& dependencyContainer)
 {
-    ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+    m_dependencyContainer = dependencyContainer;
 
+    for (Drawable* drawable : m_children)
+        drawable->Load(dependencyContainer);
+}
+
+void Container::Update(bool handleInput)
+{
     if (AutoSizeAxes != Axes::None)
     {
         if ((RelativeSizeAxes & AutoSizeAxes) != Axes::None)
@@ -40,45 +46,48 @@ void Container::Draw()
         }
     }
 
+    Drawable::Update();
+
+    for (Drawable* drawable : m_children)
+        drawable->Update(handleInput && PassThroughInput);
+}
+
+void Container::Draw()
+{
     Drawable::Draw();
 
-    // no rounded clipping cuz ocornut is gay :')
+    ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+
     drawList->PushClipRect(DrawPosition.ToImVec2(), (DrawPosition + DrawSize).ToImVec2());
 
     for (Drawable* drawable : m_children)
-    {
         drawable->Draw();
-    }
 
     drawList->PopClipRect();
-}
-
-void Container::UpdateInput(const MouseState& mouseState, const KeyboardState& keyboardState)
-{
-    Drawable::UpdateInput(mouseState, keyboardState);
-
-    if (PassThroughInput)
-        for (Drawable* drawable : m_children)
-            drawable->UpdateInput(mouseState, keyboardState);
 }
 
 void Container::SetChildren(const std::vector<Drawable*>& children)
 {
     for (const Drawable* drawable : m_children)
-    {
         delete drawable;
-    }
 
     m_children = children;
 
     for (Drawable* drawable : m_children)
     {
         drawable->Parent = this;
+
+        if (LoadState == ::LoadState::Ready)
+            drawable->Load(m_dependencyContainer);
     }
 }
 
 void Container::Add(Drawable* drawable)
 {
     drawable->Parent = this;
+
+    if (LoadState == ::LoadState::Ready)
+        drawable->Load(m_dependencyContainer);
+
     m_children.push_back(drawable);
 }

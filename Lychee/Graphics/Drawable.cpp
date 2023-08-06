@@ -20,7 +20,43 @@ Vector2 Drawable::ComputeRelativeAnchorPosition(::Anchor a) const
     return result;
 }
 
-void Drawable::Draw()
+void Drawable::LateLoad(DependencyContainer& dependencyContainer) {}
+
+void Drawable::UpdateInput(const MouseState& mouseState, const KeyboardState& keyboardState)
+{
+    const bool wasHovered = IsHovered;
+
+    IsHovered = mouseState.Position.X > DrawPosition.X && mouseState.Position.X < DrawPosition.X + DrawSize.X &&
+                mouseState.Position.Y > DrawPosition.Y && mouseState.Position.Y < DrawPosition.Y + DrawSize.Y;
+
+    if (IsHovered)
+    {
+        for (const MouseButtons& button : mouseState.PressedButtons)
+            OnMouseButtonDown(button);
+
+        for (const MouseButtons& button : mouseState.ReleasedButtons)
+            OnMouseButtonUp(button);
+
+        if (mouseState.PositionDelta.Length() > 0.f)
+            OnMouseMove(mouseState.Position, mouseState.PreviousPosition, mouseState.PositionDelta);
+
+        if (mouseState.ScrollDelta > 0.f)
+            OnScroll(mouseState.ScrollValue, mouseState.PreviousScrollValue, mouseState.ScrollDelta);
+    }
+
+    if (!wasHovered && IsHovered)
+        OnHover();
+    else if (wasHovered && !IsHovered)
+        OnHoverLost();
+
+    for (const int& pressedKey : keyboardState.PressedKeys)
+        OnKeyDown(pressedKey);
+
+    for (const int& releasedKey : keyboardState.ReleasedKeys)
+        OnKeyUp(releasedKey);
+}
+
+void Drawable::UpdateLayout()
 {
     Alpha = std::clamp(Alpha, 0.f, 1.f);
 
@@ -56,36 +92,25 @@ void Drawable::Draw()
     DrawPosition = parentDrawPosition + RelativePosition;
 }
 
-void Drawable::UpdateInput(const MouseState& mouseState, const KeyboardState& keyboardState)
+void Drawable::Load(DependencyContainer& dependencyContainer)
 {
-    const bool wasHovered = IsHovered;
-
-    IsHovered = mouseState.Position.X > DrawPosition.X && mouseState.Position.X < DrawPosition.X + DrawSize.X &&
-                mouseState.Position.Y > DrawPosition.Y && mouseState.Position.Y < DrawPosition.Y + DrawSize.Y;
-
-    if (IsHovered)
+    if (LoadState == ::LoadState::NotLoaded)
     {
-        for (const MouseButtons& button : mouseState.PressedButtons)
-            OnMouseButtonDown(button);
+        LoadState = ::LoadState::Loading;
 
-        for (const MouseButtons& button : mouseState.ReleasedButtons)
-            OnMouseButtonUp(button);
+        m_inputManager = dependencyContainer.Resolve<InputManager>();
+        LateLoad(dependencyContainer);
 
-	if (mouseState.PositionDelta.Length() > 0.f)
-            OnMouseMove(mouseState.Position, mouseState.PreviousPosition, mouseState.PositionDelta);
-
-	if (mouseState.ScrollDelta > 0.f)
-            OnScroll(mouseState.ScrollValue, mouseState.PreviousScrollValue, mouseState.ScrollDelta);
+	LoadState = ::LoadState::Ready;
     }
-
-    if (!wasHovered && IsHovered)
-        OnHover();
-    else if (wasHovered && !IsHovered)
-        OnHoverLost();
-
-    for (const int& pressedKey : keyboardState.PressedKeys)
-        OnKeyDown(pressedKey);
-
-    for (const int& releasedKey : keyboardState.ReleasedKeys)
-        OnKeyUp(releasedKey);
 }
+
+void Drawable::Update(bool handleInput)
+{
+    if (handleInput)
+        UpdateInput(m_inputManager->GetMouseState(), m_inputManager->GetKeyboardState());
+
+    UpdateLayout();
+}
+
+void Drawable::Draw() {}

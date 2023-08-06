@@ -13,5 +13,6 @@ public:
      */
     float Radius = 0.f;
 
+    void Update(bool handleInput) override;
     void Draw() override;
 };

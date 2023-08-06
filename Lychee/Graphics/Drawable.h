@@ -3,9 +3,10 @@
 #include "Anchor.h"
 #include "Axes.h"
 #include "Color.h"
+#include "LoadState.h"
 #include "Vector2.h"
-#include "../Input/MouseState.h"
-#include "../Input/KeyboardState.h"
+#include "../DependencyInjection/DependencyContainer.h"
+#include "../Input/InputManager.h"
 
 /**
  * \brief Drawables are the basic components in Lychee. Anything that is visible or interactable has to be a drawable.
@@ -13,6 +14,13 @@
 class Drawable
 {
     [[nodiscard]] Vector2 ComputeRelativeAnchorPosition(::Anchor a) const;
+
+protected:
+    InputManager* m_inputManager = nullptr;
+
+    virtual void LateLoad(DependencyContainer& dependencyContainer);
+    void UpdateInput(const MouseState& mouseState, const KeyboardState& keyboardState);
+    void UpdateLayout();
 
 public:
     /**
@@ -87,11 +95,23 @@ public:
     Drawable() = default;
     virtual ~Drawable() = default;
 
+    LoadState LoadState;
+
     /**
-     * \brief Renders this drawable. All low-level (ImGUI) rendering and update logic should be handled in this method.
+     * \brief Loads this drawable, including the gathering of dependencies and initialisation of required resources.
+     * \param dependencyContainer Dependency container that will be used to resolve this drawable's dependencies.
+     */
+    void Load(DependencyContainer& dependencyContainer);
+    /**
+     * \brief Performs a once-per-frame update specific logic on this drawable.
+     * This includes input handling, layout logic and transformation logic.
+     * \param handleInput Whether or not input should be handled for this drawable.
+     */
+    virtual void Update(bool handleInput = true);
+    /**
+     * \brief Renders this drawable. All low-level (ImGui) rendering logic should be handled in this method.
      */
     virtual void Draw();
-    virtual void UpdateInput(const MouseState& mouseState, const KeyboardState& keyboardState);
 
     bool IsHovered = false;
 
