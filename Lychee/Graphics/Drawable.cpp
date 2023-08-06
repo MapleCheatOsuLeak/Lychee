@@ -20,16 +20,14 @@ Vector2 Drawable::ComputeRelativeAnchorPosition(::Anchor a) const
     return result;
 }
 
-void Drawable::LateLoad(DependencyContainer& dependencyContainer) {}
-
 void Drawable::UpdateInput(const MouseState& mouseState, const KeyboardState& keyboardState)
 {
-    const bool wasHovered = IsHovered;
+    const bool wasHovered = m_isHovered;
 
-    IsHovered = mouseState.Position.X > DrawPosition.X && mouseState.Position.X < DrawPosition.X + DrawSize.X &&
-                mouseState.Position.Y > DrawPosition.Y && mouseState.Position.Y < DrawPosition.Y + DrawSize.Y;
+    m_isHovered = mouseState.Position.X > m_drawPosition.X && mouseState.Position.X < m_drawPosition.X + m_drawSize.X &&
+                  mouseState.Position.Y > m_drawPosition.Y && mouseState.Position.Y < m_drawPosition.Y + m_drawSize.Y;
 
-    if (IsHovered)
+    if (m_isHovered)
     {
         for (const MouseButtons& button : mouseState.PressedButtons)
             OnMouseButtonDown(button);
@@ -44,9 +42,9 @@ void Drawable::UpdateInput(const MouseState& mouseState, const KeyboardState& ke
             OnScroll(mouseState.ScrollValue, mouseState.PreviousScrollValue, mouseState.ScrollDelta);
     }
 
-    if (!wasHovered && IsHovered)
+    if (!wasHovered && m_isHovered)
         OnHover();
-    else if (wasHovered && !IsHovered)
+    else if (wasHovered && !m_isHovered)
         OnHoverLost();
 
     for (const int& pressedKey : keyboardState.PressedKeys)
@@ -60,48 +58,48 @@ void Drawable::UpdateLayout()
 {
     Alpha = std::clamp(Alpha, 0.f, 1.f);
 
-    const Vector2 parentSize = Parent ? Parent->DrawSize : ImGui::GetIO().DisplaySize;
-    const Vector2 parentScale = Parent ? Parent->DrawScale : Vector2(1.f, 1.f);
-    const Vector2 parentDrawPosition = Parent ? Parent->DrawPosition : Vector2();
-    const float parentAlpha = Parent ? Parent->DrawAlpha : 1.f;
+    const Vector2 parentSize = Parent ? Parent->m_drawSize : ImGui::GetIO().DisplaySize;
+    const Vector2 parentScale = Parent ? Parent->m_drawScale : Vector2(1.f, 1.f);
+    const Vector2 parentDrawPosition = Parent ? Parent->m_drawPosition : Vector2();
+    const float parentAlpha = Parent ? Parent->m_drawAlpha : 1.f;
 
-    RelativePosition = parentSize * ComputeRelativeAnchorPosition(Anchor) - DrawSize * ComputeRelativeAnchorPosition(Origin) + Position;
+    m_relativePosition = parentSize * ComputeRelativeAnchorPosition(Anchor) - m_drawSize * ComputeRelativeAnchorPosition(Origin) + Position;
 
-    DrawScale = Scale * parentScale;
-    DrawSize = Size * DrawScale;
-    DrawAlpha = Alpha * parentAlpha;
+    m_drawScale = Scale * parentScale;
+    m_drawSize = Size * m_drawScale;
+    m_drawAlpha = Alpha * parentAlpha;
 
     if (RelativeSizeAxes != Axes::None)
     {
         switch (RelativeSizeAxes)
         {
             case Axes::X:
-                DrawSize = Vector2(parentSize.X, DrawSize.Y);
+                m_drawSize = Vector2(parentSize.X, m_drawSize.Y);
                 break;
             case Axes::Y:
-                DrawSize = Vector2(DrawSize.X, parentSize.Y);
+                m_drawSize = Vector2(m_drawSize.X, parentSize.Y);
                 break;
             case Axes::Both:
-                DrawSize = parentSize;
+                m_drawSize = parentSize;
                 break;
             case Axes::None:
                 break;
         }
     }
 
-    DrawPosition = parentDrawPosition + RelativePosition;
+    m_drawPosition = parentDrawPosition + m_relativePosition;
 }
 
 void Drawable::Load(DependencyContainer& dependencyContainer)
 {
-    if (LoadState == ::LoadState::NotLoaded)
+    if (m_loadState == LoadState::NotLoaded)
     {
-        LoadState = ::LoadState::Loading;
+        m_loadState = LoadState::Loading;
 
         m_inputManager = dependencyContainer.Resolve<InputManager>();
         LateLoad(dependencyContainer);
 
-	LoadState = ::LoadState::Ready;
+	m_loadState = LoadState::Loaded;
     }
 }
 
@@ -113,4 +111,37 @@ void Drawable::Update(bool handleInput)
     UpdateLayout();
 }
 
-void Drawable::Draw() {}
+LoadState Drawable::GetLoadState()
+{
+    return m_loadState;
+}
+
+Vector2 Drawable::GetRelativePosition()
+{
+    return m_relativePosition;
+}
+
+Vector2 Drawable::GetDrawPosition()
+{
+    return m_drawPosition;
+}
+
+Vector2 Drawable::GetDrawSize()
+{
+    return m_drawSize;
+}
+
+Vector2 Drawable::GetDrawScale()
+{
+    return m_drawScale;
+}
+
+float Drawable::GetDrawAlpha()
+{
+    return m_drawAlpha;
+}
+
+bool Drawable::GetIsHovered()
+{
+    return m_isHovered;
+}

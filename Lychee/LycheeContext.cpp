@@ -28,7 +28,7 @@ void LycheeContext::Draw()
 
 void LycheeContext::Add(Drawable* drawable)
 {
-    if (drawable->LoadState != LoadState::Ready)
+    if (drawable->GetLoadState() == LoadState::NotLoaded)
         drawable->Load(m_dependencyContainer);
 
     m_content.push_back(drawable);
@@ -37,7 +37,7 @@ void LycheeContext::Add(Drawable* drawable)
 void LycheeContext::AddRange(std::initializer_list<Drawable*> drawables)
 {
     for (Drawable* drawable : drawables)
-        if (drawable->LoadState != LoadState::Ready)
+        if (drawable->GetLoadState() == LoadState::NotLoaded)
             drawable->Load(m_dependencyContainer);
 
     m_content.insert(m_content.end(), drawables);

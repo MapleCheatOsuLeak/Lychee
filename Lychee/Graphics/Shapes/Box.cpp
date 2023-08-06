@@ -6,5 +6,5 @@ void Box::Draw()
 
     ImDrawList* drawList = ImGui::GetBackgroundDrawList();
 
-    drawList->AddRectFilled(DrawPosition.ToImVec2(), (DrawPosition + DrawSize).ToImVec2(), Color.ToImGuiHex(DrawAlpha));
+    drawList->AddRectFilled(GetDrawPosition().ToImVec2(), (GetDrawPosition() + GetDrawSize()).ToImVec2(), Color.ToImGuiHex(GetDrawAlpha()));
 }

@@ -21,11 +21,11 @@ void SpriteText::Draw()
     ImGui::PopFont();
 
     if (!Font)
-        ImGui::GetFont()->Scale *= DrawScale.Y;
+        ImGui::GetFont()->Scale *= GetDrawScale().Y;
 
-    ImGui::PushFont(Font ? Font->ToImGuiFont(static_cast<int>(static_cast<float>(FontSize) * DrawScale.Y)) : nullptr);
+    ImGui::PushFont(Font ? Font->ToImGuiFont(static_cast<int>(static_cast<float>(FontSize) * GetDrawScale().Y)) : nullptr);
 
-    drawList->AddText(DrawPosition.ToImVec2(), Color.ToImGuiHex(DrawAlpha), Text.c_str());
+    drawList->AddText(GetDrawPosition().ToImVec2(), Color.ToImGuiHex(GetDrawAlpha()), Text.c_str());
 
     if (!Font)
         ImGui::GetFont()->Scale = oldScale;

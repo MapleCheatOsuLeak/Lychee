@@ -18,13 +18,13 @@ void Container::Update(bool handleInput)
             throw std::runtime_error("No axis can be relatively sized and automatically sized at the same time.");
 
         Vector2 maxSize;
-        for (const Drawable* child : m_children)
+        for (Drawable* child : m_children)
         {
             if ((child->RelativeSizeAxes & Axes::X) == Axes::None)
-                maxSize.X = std::max(child->DrawSize.X, maxSize.X);
+                maxSize.X = std::max(child->GetDrawSize().X, maxSize.X);
 
             if ((child->RelativeSizeAxes & Axes::Y) == Axes::None)
-                maxSize.Y = std::max(child->DrawSize.Y, maxSize.Y);
+                maxSize.Y = std::max(child->GetDrawSize().Y, maxSize.Y);
         }
 
         switch (AutoSizeAxes)
@@ -58,7 +58,7 @@ void Container::Draw()
 
     ImDrawList* drawList = ImGui::GetBackgroundDrawList();
 
-    drawList->PushClipRect(DrawPosition.ToImVec2(), (DrawPosition + DrawSize).ToImVec2());
+    drawList->PushClipRect(GetDrawPosition().ToImVec2(), (GetDrawPosition() + GetDrawSize()).ToImVec2());
 
     for (Drawable* drawable : m_children)
         drawable->Draw();
@@ -77,7 +77,7 @@ void Container::SetChildren(const std::vector<Drawable*>& children)
     {
         drawable->Parent = this;
 
-        if (LoadState == ::LoadState::Ready)
+        if (GetLoadState() == LoadState::Loaded)
             drawable->Load(m_dependencyContainer);
     }
 }
@@ -86,7 +86,7 @@ void Container::Add(Drawable* drawable)
 {
     drawable->Parent = this;
 
-    if (LoadState == ::LoadState::Ready)
+    if (GetLoadState() == LoadState::Loaded)
         drawable->Load(m_dependencyContainer);
 
     m_children.push_back(drawable);

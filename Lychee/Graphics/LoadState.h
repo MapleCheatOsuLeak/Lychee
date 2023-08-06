@@ -3,6 +3,6 @@
 enum class LoadState
 {
     NotLoaded,
-	Loading,
-	Ready
+    Loading,
+    Loaded
 };
