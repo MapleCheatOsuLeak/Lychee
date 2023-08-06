@@ -9,8 +9,6 @@ void Circle::Update(bool handleInput)
 
 void Circle::Draw()
 {
-    Drawable::Draw();
-
     ImDrawList* drawList = ImGui::GetBackgroundDrawList();
 
     drawList->AddCircleFilled((GetDrawPosition() + (GetDrawSize() / Vector2(2.f, 2.f))).ToImVec2(),

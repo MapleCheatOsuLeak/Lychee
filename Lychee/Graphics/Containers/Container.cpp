@@ -7,16 +7,17 @@ void Container::LateLoad(const std::shared_ptr<DependencyContainer>& dependencyC
     m_dependencyContainer = dependencyContainer;
 
     for (Drawable* drawable : m_children)
-        drawable->Load(GetClock(), dependencyContainer);
+        if (drawable->GetLoadState() == LoadState::NotLoaded)
+            drawable->Load(GetClock(), dependencyContainer);
 }
 
 void Container::UpdateClock(double deltaTime)
 {
-    Drawable::UpdateClock(deltaTime);
-
     for (Drawable* child : m_children)
-        if (child->GetIsCustomClock())
+        if (child->GetLoadState() == LoadState::Loaded && !child->GetIsCustomClock())
             child->UpdateClock(deltaTime);
+
+    Drawable::UpdateClock(deltaTime);
 }
 
 void Container::Update(bool handleInput)
@@ -58,19 +59,19 @@ void Container::Update(bool handleInput)
     Drawable::Update();
 
     for (Drawable* drawable : m_children)
-        drawable->Update(handleInput && PassThroughInput);
+        if (drawable->GetLoadState() == LoadState::Loaded)
+            drawable->Update(handleInput && PassThroughInput);
 }
 
 void Container::Draw()
 {
-    Drawable::Draw();
-
     ImDrawList* drawList = ImGui::GetBackgroundDrawList();
 
     drawList->PushClipRect(GetDrawPosition().ToImVec2(), (GetDrawPosition() + GetDrawSize()).ToImVec2());
 
     for (Drawable* drawable : m_children)
-        drawable->Draw();
+        if (drawable->GetLoadState() == LoadState::Loaded)
+            drawable->Draw();
 
     drawList->PopClipRect();
 }

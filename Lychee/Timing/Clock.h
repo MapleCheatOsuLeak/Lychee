@@ -6,7 +6,7 @@
 class Clock
 {
     double m_time = 0.;
-    bool m_isRunning = false;
+    bool m_isRunning = true;
 
 public:
     /**

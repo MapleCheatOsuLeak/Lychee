@@ -27,6 +27,9 @@ void LycheeContext::Update()
 
     for (Drawable* drawable : m_content)
     {
+        if (drawable->GetLoadState() != LoadState::Loaded)
+            continue;
+
         if (drawable->GetIsCustomClock())
             drawable->UpdateClock(deltaTime);
 
@@ -37,7 +40,8 @@ void LycheeContext::Update()
 void LycheeContext::Draw()
 {
     for (Drawable* drawable : m_content)
-        drawable->Draw();
+        if (drawable->GetLoadState() == LoadState::Loaded)
+            drawable->Draw();
 }
 
 void LycheeContext::Add(Drawable* drawable)
