@@ -5,19 +5,21 @@
 #include "Graphics/Drawable.h"
 #include "Input/InputManager.h"
 
+#include <memory>
 #include <vector>
 
 class LycheeContext
 {
-    DependencyContainer m_dependencyContainer = DependencyContainer();
-    InputManager m_inputManager = InputManager();
-    FontStorage m_fontStorage = FontStorage();
+    std::shared_ptr<DependencyContainer> m_dependencyContainer;
+    std::shared_ptr<Clock> m_globalClock;
+    std::shared_ptr<InputManager> m_inputManager;
+    std::shared_ptr<FontStorage> m_fontStorage;
 
     std::vector<Drawable*> m_content = {};
 public:
     LycheeContext();
 
-    FontStorage& GetFontStorage();
+    std::shared_ptr<FontStorage> GetFontStorage();
 
     void Update();
     void Draw();

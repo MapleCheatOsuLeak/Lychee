@@ -2,12 +2,21 @@
 
 #include <stdexcept>
 
-void Container::LateLoad(DependencyContainer& dependencyContainer)
+void Container::LateLoad(const std::shared_ptr<DependencyContainer>& dependencyContainer)
 {
     m_dependencyContainer = dependencyContainer;
 
     for (Drawable* drawable : m_children)
-        drawable->Load(dependencyContainer);
+        drawable->Load(GetClock(), dependencyContainer);
+}
+
+void Container::UpdateClock(double deltaTime)
+{
+    Drawable::UpdateClock(deltaTime);
+
+    for (Drawable* child : m_children)
+        if (child->GetIsCustomClock())
+            child->UpdateClock(deltaTime);
 }
 
 void Container::Update(bool handleInput)
@@ -78,7 +87,7 @@ void Container::SetChildren(const std::vector<Drawable*>& children)
         drawable->Parent = this;
 
         if (GetLoadState() == LoadState::Loaded)
-            drawable->Load(m_dependencyContainer);
+            drawable->Load(GetClock(), m_dependencyContainer);
     }
 }
 
@@ -87,7 +96,7 @@ void Container::Add(Drawable* drawable)
     drawable->Parent = this;
 
     if (GetLoadState() == LoadState::Loaded)
-        drawable->Load(m_dependencyContainer);
+        drawable->Load(GetClock(), m_dependencyContainer);
 
     m_children.push_back(drawable);
 }

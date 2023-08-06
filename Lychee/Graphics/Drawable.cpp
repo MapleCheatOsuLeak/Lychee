@@ -90,13 +90,15 @@ void Drawable::UpdateLayout()
     m_drawPosition = parentDrawPosition + m_relativePosition;
 }
 
-void Drawable::Load(DependencyContainer& dependencyContainer)
+void Drawable::Load(const std::shared_ptr<Clock>& defaultClock, const std::shared_ptr<DependencyContainer>& dependencyContainer)
 {
     if (m_loadState == LoadState::NotLoaded)
     {
         m_loadState = LoadState::Loading;
 
-        m_inputManager = dependencyContainer.Resolve<InputManager>();
+	if (!m_isCustomClock)
+	    m_clock = defaultClock;
+        m_inputManager = dependencyContainer->Resolve<InputManager>();
         LateLoad(dependencyContainer);
 
 	m_loadState = LoadState::Loaded;
@@ -114,6 +116,30 @@ void Drawable::Update(bool handleInput)
 LoadState Drawable::GetLoadState()
 {
     return m_loadState;
+}
+
+std::shared_ptr<Clock> Drawable::GetClock()
+{
+    return m_clock;
+}
+
+void Drawable::SetClock(const std::shared_ptr<Clock>& newClock)
+{
+    m_clock = newClock;
+    m_isCustomClock = true;
+}
+
+bool Drawable::GetIsCustomClock()
+{
+    return m_isCustomClock;
+}
+
+void Drawable::UpdateClock(double deltaTime)
+{
+    if (!m_isCustomClock)
+        return;
+
+    m_clock->Update(deltaTime);
 }
 
 Vector2 Drawable::GetRelativePosition()

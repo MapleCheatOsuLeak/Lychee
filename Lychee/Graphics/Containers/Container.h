@@ -10,21 +10,21 @@
  */
 class Container : public Drawable
 {
-    DependencyContainer m_dependencyContainer;
+    std::shared_ptr<DependencyContainer> m_dependencyContainer;
     std::vector<Drawable*> m_children;
 
 protected:
-    void LateLoad(DependencyContainer& dependencyContainer) override;
+    void LateLoad(const std::shared_ptr<DependencyContainer>& dependencyContainer) override;
 
 public:
     bool PassThroughInput = true;
-
     /**
      * \brief Controls which axes are automatically sized to this Container's maximum children size.
      * Any sizing manipulations with the Axes of AutoSizeAxes will either be discarded or cause an exception.
      */
     Axes AutoSizeAxes = Axes::None;
 
+    void UpdateClock(double deltaTime) override;
     void Update(bool handleInput) override;
     void Draw() override;
 
