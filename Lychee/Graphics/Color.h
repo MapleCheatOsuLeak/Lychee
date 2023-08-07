@@ -57,6 +57,17 @@ struct Color
         A = hex & 0xFF;
     }
 
+    [[nodiscard]] Color Multiply(Color color) const
+    {
+        return
+        {
+            static_cast<uint8_t>(std::clamp(static_cast<float>(R) / 255.f * (static_cast<float>(color.R) / 255.f) * 255.f, 0.f, 255.f)),
+            static_cast<uint8_t>(std::clamp(static_cast<float>(G) / 255.f * (static_cast<float>(color.G) / 255.f) * 255.f, 0.f, 255.f)),
+            static_cast<uint8_t>(std::clamp(static_cast<float>(B) / 255.f * (static_cast<float>(color.B) / 255.f) * 255.f, 0.f, 255.f)),
+            static_cast<uint8_t>(std::clamp(static_cast<float>(A) / 255.f * (static_cast<float>(color.A) / 255.f) * 255.f, 0.f, 255.f)),
+        };
+    }
+
     /**
      * \brief Gets the 32-bit ARGB value of this color.
      * \return 32-bit ARGB value.

@@ -8,8 +8,11 @@
 #include "../DependencyInjection/DependencyContainer.h"
 #include "../Input/InputManager.h"
 #include "../Timing/Clock.h"
+#include "../Transformations/Easing.h"
 
 #include <memory>
+
+class TransformationSequence;
 
 /**
  * \brief Drawables are the basic components in Lychee. Anything that is visible or interactable has to be a drawable.
@@ -23,7 +26,9 @@ class Drawable
     Vector2 m_drawPosition;
     Vector2 m_drawSize;
     Vector2 m_drawScale;
+    Color m_drawColor;
     float m_drawAlpha;
+    std::vector<std::shared_ptr<TransformationSequence>> m_transformations = {};
     bool m_isHovered = false;
 
     [[nodiscard]] Vector2 ComputeRelativeAnchorPosition(::Anchor a) const;
@@ -103,6 +108,23 @@ public:
     virtual void OnHoverLost() {}
     virtual void OnKeyDown(int key) {}
     virtual void OnKeyUp(int key) {}
+    TransformationSequence& FadeIn(double duration = 0., Easing easing = Easing::None);
+    TransformationSequence& FadeOut(double duration = 0., Easing easing = Easing::None);
+    TransformationSequence& FadeTo(float newAlpha, double duration = 0., Easing easing = Easing::None);
+    TransformationSequence& FadeInFromZero(double duration = 0., Easing easing = Easing::None);
+    TransformationSequence& FadeOutFromOne(double duration = 0., Easing easing = Easing::None);
+    TransformationSequence& MoveTo(Vector2 newPosition, double duration = 0., Easing easing = Easing::None);
+    TransformationSequence& MoveToOffset(Vector2 offset, double duration = 0., Easing easing = Easing::None);
+    TransformationSequence& MoveToX(float newX, double duration = 0., Easing easing = Easing::None);
+    TransformationSequence& MoveToY(float newY, double duration = 0., Easing easing = Easing::None);
+    TransformationSequence& ResizeTo(Vector2 newSize, double duration = 0., Easing easing = Easing::None);
+    TransformationSequence& ResizeWidth(float newWidth, double duration = 0., Easing easing = Easing::None);
+    TransformationSequence& ResizeHeight(float newHeight, double duration = 0., Easing easing = Easing::None);
+    TransformationSequence& ScaleTo(Vector2 newScale, double duration = 0., Easing easing = Easing::None);
+    TransformationSequence& ScaleTo(float newScale, double duration = 0., Easing easing = Easing::None);
+    TransformationSequence& FadeColor(::Color newColor, double duration = 0., Easing easing = Easing::None);
+    TransformationSequence& FlashColor(::Color flashColor, double duration = 0., Easing easing = Easing::None);
+    TransformationSequence& Delay(double delay);
     /**
      * \return Describes the current state of this Drawable within the loading pipeline.
      */
@@ -142,6 +164,10 @@ public:
      * \return Absolute scale of this drawable.
      */
     Vector2 GetDrawScale();
+    /**
+     * \return Absolute color of this drawable.
+     */
+    ::Color GetDrawColor();
     /**
      * \return Absolute alpha factor applied on top of this drawable's color and its existing alpha channel.
      */

@@ -12,5 +12,5 @@ void Circle::Draw()
     ImDrawList* drawList = ImGui::GetBackgroundDrawList();
 
     drawList->AddCircleFilled((GetDrawPosition() + (GetDrawSize() / Vector2(2.f, 2.f))).ToImVec2(),
-                               (RelativeSizeAxes == Axes::X ? GetDrawSize().X : GetDrawSize().Y) / 2.f, Color.ToImGuiHex(GetDrawAlpha()));
+                               (RelativeSizeAxes == Axes::X ? GetDrawSize().X : GetDrawSize().Y) / 2.f, GetDrawColor().ToImGuiHex(GetDrawAlpha()));
 }

@@ -1,5 +1,7 @@
 #include "Drawable.h"
 
+#include "../Transformations/TransformationSequence.h"
+
 Vector2 Drawable::ComputeRelativeAnchorPosition(::Anchor a) const
 {
     if (a == Anchor::Custom)
@@ -61,12 +63,14 @@ void Drawable::UpdateLayout()
     const Vector2 parentSize = Parent ? Parent->m_drawSize : ImGui::GetIO().DisplaySize;
     const Vector2 parentScale = Parent ? Parent->m_drawScale : Vector2(1.f, 1.f);
     const Vector2 parentDrawPosition = Parent ? Parent->m_drawPosition : Vector2();
+    const ::Color parentColor = Parent ? Parent->Color : ::Color();
     const float parentAlpha = Parent ? Parent->m_drawAlpha : 1.f;
 
     m_relativePosition = parentSize * ComputeRelativeAnchorPosition(Anchor) - m_drawSize * ComputeRelativeAnchorPosition(Origin) + Position;
 
     m_drawScale = Scale * parentScale;
     m_drawSize = Size * m_drawScale;
+    m_drawColor = Color.Multiply(parentColor);
     m_drawAlpha = Alpha * parentAlpha;
 
     if (RelativeSizeAxes != Axes::None)
@@ -110,7 +114,180 @@ void Drawable::Update(bool handleInput)
     if (handleInput)
         UpdateInput(m_inputManager->GetMouseState(), m_inputManager->GetKeyboardState());
 
+    for (const auto& sequence : m_transformations)
+        sequence->ApplyTransformations();
+
     UpdateLayout();
+}
+
+TransformationSequence& Drawable::FadeIn(double duration, Easing easing)
+{
+    const auto sequence = std::make_shared<TransformationSequence>(this);
+    m_transformations.push_back(sequence);
+
+    sequence->FadeIn(duration, easing);
+
+    return *sequence;
+}
+
+TransformationSequence& Drawable::FadeOut(double duration, Easing easing)
+{
+    const auto sequence = std::make_shared<TransformationSequence>(this);
+    m_transformations.push_back(sequence);
+
+    sequence->FadeOut(duration, easing);
+
+    return *sequence;
+}
+
+TransformationSequence& Drawable::FadeTo(float newAlpha, double duration, Easing easing)
+{
+    const auto sequence = std::make_shared<TransformationSequence>(this);
+    m_transformations.push_back(sequence);
+
+    sequence->FadeTo(newAlpha, duration, easing);
+
+    return *sequence;
+}
+
+TransformationSequence& Drawable::FadeInFromZero(double duration, Easing easing)
+{
+    const auto sequence = std::make_shared<TransformationSequence>(this);
+    m_transformations.push_back(sequence);
+
+    sequence->FadeInFromZero(duration, easing);
+
+    return *sequence;
+}
+
+TransformationSequence& Drawable::FadeOutFromOne(double duration, Easing easing)
+{
+    const auto sequence = std::make_shared<TransformationSequence>(this);
+    m_transformations.push_back(sequence);
+
+    sequence->FadeOutFromOne(duration, easing);
+
+    return *sequence;
+}
+
+TransformationSequence& Drawable::MoveTo(Vector2 newPosition, double duration, Easing easing)
+{
+    const auto sequence = std::make_shared<TransformationSequence>(this);
+    m_transformations.push_back(sequence);
+
+    sequence->MoveTo(newPosition, duration, easing);
+
+    return *sequence;
+}
+
+TransformationSequence& Drawable::MoveToOffset(Vector2 offset, double duration, Easing easing)
+{
+    const auto sequence = std::make_shared<TransformationSequence>(this);
+    m_transformations.push_back(sequence);
+
+    sequence->MoveToOffset(offset, duration, easing);
+
+    return *sequence;
+}
+
+TransformationSequence& Drawable::MoveToX(float newX, double duration, Easing easing)
+{
+    const auto sequence = std::make_shared<TransformationSequence>(this);
+    m_transformations.push_back(sequence);
+
+    sequence->MoveToX(newX, duration, easing);
+
+    return *sequence;
+}
+
+TransformationSequence& Drawable::MoveToY(float newY, double duration, Easing easing)
+{
+    const auto sequence = std::make_shared<TransformationSequence>(this);
+    m_transformations.push_back(sequence);
+
+    sequence->MoveToY(newY, duration, easing);
+
+    return *sequence;
+}
+
+TransformationSequence& Drawable::ResizeTo(Vector2 newSize, double duration, Easing easing)
+{
+    const auto sequence = std::make_shared<TransformationSequence>(this);
+    m_transformations.push_back(sequence);
+
+    sequence->ResizeTo(newSize, duration, easing);
+
+    return *sequence;
+}
+
+TransformationSequence& Drawable::ResizeWidth(float newWidth, double duration, Easing easing)
+{
+    const auto sequence = std::make_shared<TransformationSequence>(this);
+    m_transformations.push_back(sequence);
+
+    sequence->ResizeWidth(newWidth, duration, easing);
+
+    return *sequence;
+}
+
+TransformationSequence& Drawable::ResizeHeight(float newHeight, double duration, Easing easing)
+{
+    const auto sequence = std::make_shared<TransformationSequence>(this);
+    m_transformations.push_back(sequence);
+
+    sequence->ResizeHeight(newHeight, duration, easing);
+
+    return *sequence;
+}
+
+TransformationSequence& Drawable::ScaleTo(Vector2 newScale, double duration, Easing easing)
+{
+    const auto sequence = std::make_shared<TransformationSequence>(this);
+    m_transformations.push_back(sequence);
+
+    sequence->ScaleTo(newScale, duration, easing);
+
+    return *sequence;
+}
+
+TransformationSequence& Drawable::ScaleTo(float newScale, double duration, Easing easing)
+{
+    const auto sequence = std::make_shared<TransformationSequence>(this);
+    m_transformations.push_back(sequence);
+
+    sequence->ScaleTo(newScale, duration, easing);
+
+    return *sequence;
+}
+
+TransformationSequence& Drawable::FadeColor(::Color newColor, double duration, Easing easing)
+{
+    const auto sequence = std::make_shared<TransformationSequence>(this);
+    m_transformations.push_back(sequence);
+
+    sequence->FadeColor(newColor, duration, easing);
+
+    return *sequence;
+}
+
+TransformationSequence& Drawable::FlashColor(::Color flashColor, double duration, Easing easing)
+{
+    const auto sequence = std::make_shared<TransformationSequence>(this);
+    m_transformations.push_back(sequence);
+
+    sequence->FlashColor(flashColor, duration, easing);
+
+    return *sequence;
+}
+
+TransformationSequence& Drawable::Delay(double delay)
+{
+    const auto sequence = std::make_shared<TransformationSequence>(this);
+    m_transformations.push_back(sequence);
+
+    sequence->Delay(delay);
+
+    return *sequence;
 }
 
 LoadState Drawable::GetLoadState()
@@ -160,6 +337,11 @@ Vector2 Drawable::GetDrawSize()
 Vector2 Drawable::GetDrawScale()
 {
     return m_drawScale;
+}
+
+::Color Drawable::GetDrawColor()
+{
+    return m_drawColor;
 }
 
 float Drawable::GetDrawAlpha()
