@@ -22,7 +22,7 @@ void LycheeContext::Update()
 {
     m_inputManager->Update();
 
-    const double deltaTime = static_cast<double>(ImGui::GetIO().DeltaTime) * 1000.;
+    const auto deltaTime = static_cast<double>(ImGui::GetIO().DeltaTime) * 1000.;
     m_globalClock->Update(deltaTime);
 
     for (Drawable* drawable : m_content)
@@ -54,7 +54,7 @@ void LycheeContext::Add(Drawable* drawable)
 
 void LycheeContext::AddRange(std::initializer_list<Drawable*> drawables)
 {
-    for (Drawable* drawable : drawables)
+    for (const auto drawable : drawables)
         if (drawable->GetLoadState() == LoadState::NotLoaded)
             drawable->Load(m_globalClock, m_dependencyContainer);
 

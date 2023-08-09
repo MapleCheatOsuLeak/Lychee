@@ -60,11 +60,11 @@ void Drawable::UpdateLayout()
 {
     Alpha = std::clamp(Alpha, 0.f, 1.f);
 
-    const Vector2 parentSize = Parent ? Parent->m_drawSize : ImGui::GetIO().DisplaySize;
-    const Vector2 parentScale = Parent ? Parent->m_drawScale : Vector2(1.f, 1.f);
-    const Vector2 parentDrawPosition = Parent ? Parent->m_drawPosition : Vector2();
-    const ::Color parentColor = Parent ? Parent->Color : ::Color();
-    const float parentAlpha = Parent ? Parent->m_drawAlpha : 1.f;
+    const auto parentSize = Parent ? Parent->m_drawSize : ImGui::GetIO().DisplaySize;
+    const auto parentScale = Parent ? Parent->m_drawScale : Vector2(1.f, 1.f);
+    const auto parentDrawPosition = Parent ? Parent->m_drawPosition : Vector2();
+    const auto parentColor = Parent ? Parent->Color : ::Color();
+    const auto parentAlpha = Parent ? Parent->m_drawAlpha : 1.f;
 
     m_relativePosition = parentSize * ComputeRelativeAnchorPosition(Anchor) - m_drawSize * ComputeRelativeAnchorPosition(Origin) + Position;
 
@@ -114,7 +114,7 @@ void Drawable::Update(bool handleInput)
     if (handleInput)
         UpdateInput(m_inputManager->GetMouseState(), m_inputManager->GetKeyboardState());
 
-    for (const auto& sequence : m_transformations)
+    for (const std::shared_ptr<TransformationSequence>& sequence : m_transformations)
         sequence->ApplyTransformations();
 
     UpdateLayout();

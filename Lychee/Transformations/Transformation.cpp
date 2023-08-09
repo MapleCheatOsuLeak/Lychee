@@ -209,7 +209,7 @@ void Transformation::Apply(double time)
 
     const double duration = m_endTime - m_startTime;
     const double remaining = m_endTime - time;
-    const float t = std::max(0.f, std::min(1.f, static_cast<float>(interpolate(m_easing, 1. - remaining / duration))));
+    const auto t = std::max(0.f, std::min(1.f, static_cast<float>(interpolate(m_easing, 1. - remaining / duration))));
 
     switch (m_type)
     {

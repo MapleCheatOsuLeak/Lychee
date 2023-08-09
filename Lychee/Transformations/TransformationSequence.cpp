@@ -11,13 +11,13 @@ void TransformationSequence::ApplyTransformations()
 {
     const double time = m_drawable->GetClock()->GetTime();
 
-    for (const auto& transformation : m_sequence)
+    for (const std::shared_ptr<Transformation>& transformation : m_sequence)
         transformation->Apply(time);
 }
 
 void TransformationSequence::FinishTransformations()
 {
-    for (const auto& transformation : m_sequence)
+    for (const std::shared_ptr<Transformation>& transformation : m_sequence)
         transformation->Finish();
 }
 
@@ -349,7 +349,7 @@ TransformationSequence& TransformationSequence::Delay(double delay)
 
 TransformationSequence& TransformationSequence::Loop(double pause)
 {
-    for (const auto& transformation : m_sequence)
+    for (const std::shared_ptr<Transformation>& transformation : m_sequence)
         transformation->Loop(m_maxEndTime - m_minStartTime, pause);
 
     return *this;
