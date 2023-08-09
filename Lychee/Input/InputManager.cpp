@@ -46,9 +46,9 @@ void InputManager::Update()
 
     m_previousMousePosition = io.MousePos;
     m_previousScrollValue = io.MouseWheel;
-    memcpy(m_previousPressedButtons, io.MouseDown, 5);
+    std::copy_n(io.MouseDown, 5, m_previousPressedButtons);
 
-    memcpy(m_previousPressedKeys, io.KeysDown, 512);
+    std::copy_n(io.KeysDown, 512, m_previousPressedKeys);
 }
 
 bool InputManager::GetShowCursor()
