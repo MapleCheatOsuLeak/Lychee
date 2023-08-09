@@ -1,15 +1,10 @@
 #include "FontStorage.h"
 
-FontStorage::~FontStorage()
-{
-    for (const auto& font : fonts)
-        delete font.second;
-
-    fonts.clear();
-}
-
 void FontStorage::AddFromFile(const std::string& name, const std::string& filePath)
 {
+    if (name.empty() && !m_fonts.empty())
+        return;
+
     const ImGuiIO& io = ImGui::GetIO();
 
     ImFontConfig config;
@@ -19,11 +14,14 @@ void FontStorage::AddFromFile(const std::string& name, const std::string& filePa
     ImFont* smallFont = io.Fonts->AddFontFromFileTTF(filePath.c_str(), 24, &config);
     ImFont* bigFont = io.Fonts->AddFontFromFileTTF(filePath.c_str(), 72, &config);
     
-    fonts[name] = new Font(smallFont, bigFont);
+    m_fonts[name] = std::make_shared<Font>(smallFont, bigFont);
 }
 
 void FontStorage::AddFromMemory(const std::string& name, const void* data, int size)
 {
+    if (name.empty() && !m_fonts.empty())
+        return;
+
     const ImGuiIO& io = ImGui::GetIO();
 
     // ImGui fonts SUCK!!!
@@ -36,10 +34,12 @@ void FontStorage::AddFromMemory(const std::string& name, const void* data, int s
     ImFont* smallFont = io.Fonts->AddFontFromMemoryCompressedTTF(data, size, 24, &config);
     ImFont* bigFont = io.Fonts->AddFontFromMemoryCompressedTTF(data, size, 72, &config);
 
-    fonts[name] = new Font(smallFont, bigFont);
+    m_fonts[name] = std::make_shared<Font>(smallFont, bigFont);
 }
 
-Font* FontStorage::Get(const std::string& name)
+std::shared_ptr<Font> FontStorage::Get(const std::string& name)
 {
-    return fonts[name];
+    std::shared_ptr<Font> result = m_fonts[name];
+
+    return result ? result : m_fonts[{}];
 }

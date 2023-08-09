@@ -10,5 +10,5 @@ class Font
 public:
     Font(ImFont* smallFont, ImFont* bigFont);
 
-    ImFont* ToImGuiFont(int size) const;
+    [[nodiscard]] ImFont* ToImGuiFont(int size) const;
 };

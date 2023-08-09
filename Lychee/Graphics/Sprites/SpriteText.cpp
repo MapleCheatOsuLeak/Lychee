@@ -1,18 +1,17 @@
 #include "SpriteText.h"
 
+void SpriteText::LateLoad(const std::shared_ptr<DependencyContainer>& dependencyContainer)
+{
+    m_fontStorage = dependencyContainer->Resolve<FontStorage>();
+
+    m_font = m_fontStorage->Get(m_fontName);
+}
+
 void SpriteText::Draw()
 {
     ImDrawList* drawList = ImGui::GetBackgroundDrawList();
 
-    float oldScale = 1.f;
-    if (!Font)
-    {
-        ImFont* defaultFont = ImGui::GetIO().FontDefault ? ImGui::GetIO().FontDefault : ImGui::GetIO().Fonts->Fonts[0];
-        oldScale = defaultFont->Scale;
-        defaultFont->Scale = static_cast<float>(FontSize) / defaultFont->FontSize;
-    }
-
-    ImGui::PushFont(Font ? Font->ToImGuiFont(FontSize) : nullptr);
+    ImGui::PushFont(m_font->ToImGuiFont(FontSize));
 
     Size = ImGui::CalcTextSize(Text.c_str());
 
@@ -20,15 +19,17 @@ void SpriteText::Draw()
 
     ImGui::PopFont();
 
-    if (!Font)
-        ImGui::GetFont()->Scale *= GetDrawScale().Y;
-
-    ImGui::PushFont(Font ? Font->ToImGuiFont(static_cast<int>(static_cast<float>(FontSize) * GetDrawScale().Y)) : nullptr);
+    ImGui::PushFont(m_font->ToImGuiFont(static_cast<int>(static_cast<float>(FontSize) * GetDrawScale().Y)));
 
     drawList->AddText(GetDrawPosition().ToImVec2(), Color.ToImGuiHex(GetDrawAlpha()), Text.c_str());
 
-    if (!Font)
-        ImGui::GetFont()->Scale = oldScale;
-
     ImGui::PopFont();
+}
+
+void SpriteText::SetFont(const std::string& fontName)
+{
+    m_fontName = fontName;
+
+    if (GetLoadState() == LoadState::Loaded)
+        m_font = m_fontStorage->Get(m_fontName);
 }
