@@ -9,14 +9,14 @@ class TransformationSequence
 {
     std::vector<std::shared_ptr<Transformation>> m_sequence = {};
 
-    Drawable* m_drawable;
+    std::weak_ptr<Drawable> m_drawable;
     double m_delay = 0.;
     double m_nextMinimumStartTime = 0.;
     double m_minStartTime = 0.;
     double m_maxEndTime = 0.;
 
 public:
-    TransformationSequence(Drawable* drawable);
+    TransformationSequence(const std::shared_ptr<Drawable>& drawable);
     TransformationSequence() = default;
 
     void ApplyTransformations();

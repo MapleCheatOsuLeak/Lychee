@@ -22,7 +22,7 @@ class Transformation
 
     static double interpolate(Easing easing, double time);
 
-    Drawable* m_drawable = nullptr;
+    std::weak_ptr<Drawable> m_drawable;
     TransformationType m_type = TransformationType::Alpha;
     Easing m_easing = Easing::None;
     double m_startTime = 0.;
@@ -41,9 +41,9 @@ class Transformation
     Color m_endColor = Color();
 
 public:
-    Transformation(Drawable* drawable, TransformationType type, Easing easing, double startTime, double endTime, float endFloat);
-    Transformation(Drawable* drawable, TransformationType type, Easing easing, double startTime, double endTime, Vector2 endVector);
-    Transformation(Drawable* drawable, TransformationType type, Easing easing, double startTime, double endTime, Color endColor);
+    Transformation(const std::shared_ptr<Drawable>& drawable, TransformationType type, Easing easing, double startTime, double endTime, float endFloat);
+    Transformation(const std::shared_ptr<Drawable>& drawable, TransformationType type, Easing easing, double startTime, double endTime, Vector2 endVector);
+    Transformation(const std::shared_ptr<Drawable>& drawable, TransformationType type, Easing easing, double startTime, double endTime, Color endColor);
     Transformation() = default;
 
     TransformationType GetType();

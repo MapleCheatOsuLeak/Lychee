@@ -60,11 +60,12 @@ void Drawable::UpdateLayout()
 {
     Alpha = std::clamp(Alpha, 0.f, 1.f);
 
-    const auto parentSize = Parent ? Parent->m_drawSize : ImGui::GetIO().DisplaySize;
-    const auto parentScale = Parent ? Parent->m_drawScale : Vector2(1.f, 1.f);
-    const auto parentDrawPosition = Parent ? Parent->m_drawPosition : Vector2();
-    const auto parentColor = Parent ? Parent->Color : ::Color();
-    const auto parentAlpha = Parent ? Parent->m_drawAlpha : 1.f;
+    const std::shared_ptr<Drawable> parent = Parent.lock();
+    const auto parentSize = parent ? parent->m_drawSize : ImGui::GetIO().DisplaySize;
+    const auto parentScale = parent ? parent->m_drawScale : Vector2(1.f, 1.f);
+    const auto parentDrawPosition = parent ? parent->m_drawPosition : Vector2();
+    const auto parentColor = parent ? parent->Color : ::Color();
+    const auto parentAlpha = parent ? parent->m_drawAlpha : 1.f;
 
     m_relativePosition = parentSize * ComputeRelativeAnchorPosition(Anchor) - m_drawSize * ComputeRelativeAnchorPosition(Origin) + Position;
 
@@ -122,7 +123,7 @@ void Drawable::Update(bool handleInput)
 
 TransformationSequence& Drawable::FadeIn(double duration, Easing easing)
 {
-    const auto sequence = std::make_shared<TransformationSequence>(this);
+    const auto sequence = std::make_shared<TransformationSequence>(shared_from_this());
     m_transformations.push_back(sequence);
 
     sequence->FadeIn(duration, easing);
@@ -132,7 +133,7 @@ TransformationSequence& Drawable::FadeIn(double duration, Easing easing)
 
 TransformationSequence& Drawable::FadeOut(double duration, Easing easing)
 {
-    const auto sequence = std::make_shared<TransformationSequence>(this);
+    const auto sequence = std::make_shared<TransformationSequence>(shared_from_this());
     m_transformations.push_back(sequence);
 
     sequence->FadeOut(duration, easing);
@@ -142,7 +143,7 @@ TransformationSequence& Drawable::FadeOut(double duration, Easing easing)
 
 TransformationSequence& Drawable::FadeTo(float newAlpha, double duration, Easing easing)
 {
-    const auto sequence = std::make_shared<TransformationSequence>(this);
+    const auto sequence = std::make_shared<TransformationSequence>(shared_from_this());
     m_transformations.push_back(sequence);
 
     sequence->FadeTo(newAlpha, duration, easing);
@@ -152,7 +153,7 @@ TransformationSequence& Drawable::FadeTo(float newAlpha, double duration, Easing
 
 TransformationSequence& Drawable::FadeInFromZero(double duration, Easing easing)
 {
-    const auto sequence = std::make_shared<TransformationSequence>(this);
+    const auto sequence = std::make_shared<TransformationSequence>(shared_from_this());
     m_transformations.push_back(sequence);
 
     sequence->FadeInFromZero(duration, easing);
@@ -162,7 +163,7 @@ TransformationSequence& Drawable::FadeInFromZero(double duration, Easing easing)
 
 TransformationSequence& Drawable::FadeOutFromOne(double duration, Easing easing)
 {
-    const auto sequence = std::make_shared<TransformationSequence>(this);
+    const auto sequence = std::make_shared<TransformationSequence>(shared_from_this());
     m_transformations.push_back(sequence);
 
     sequence->FadeOutFromOne(duration, easing);
@@ -172,7 +173,7 @@ TransformationSequence& Drawable::FadeOutFromOne(double duration, Easing easing)
 
 TransformationSequence& Drawable::MoveTo(Vector2 newPosition, double duration, Easing easing)
 {
-    const auto sequence = std::make_shared<TransformationSequence>(this);
+    const auto sequence = std::make_shared<TransformationSequence>(shared_from_this());
     m_transformations.push_back(sequence);
 
     sequence->MoveTo(newPosition, duration, easing);
@@ -182,7 +183,7 @@ TransformationSequence& Drawable::MoveTo(Vector2 newPosition, double duration, E
 
 TransformationSequence& Drawable::MoveToOffset(Vector2 offset, double duration, Easing easing)
 {
-    const auto sequence = std::make_shared<TransformationSequence>(this);
+    const auto sequence = std::make_shared<TransformationSequence>(shared_from_this());
     m_transformations.push_back(sequence);
 
     sequence->MoveToOffset(offset, duration, easing);
@@ -192,7 +193,7 @@ TransformationSequence& Drawable::MoveToOffset(Vector2 offset, double duration, 
 
 TransformationSequence& Drawable::MoveToX(float newX, double duration, Easing easing)
 {
-    const auto sequence = std::make_shared<TransformationSequence>(this);
+    const auto sequence = std::make_shared<TransformationSequence>(shared_from_this());
     m_transformations.push_back(sequence);
 
     sequence->MoveToX(newX, duration, easing);
@@ -202,7 +203,7 @@ TransformationSequence& Drawable::MoveToX(float newX, double duration, Easing ea
 
 TransformationSequence& Drawable::MoveToY(float newY, double duration, Easing easing)
 {
-    const auto sequence = std::make_shared<TransformationSequence>(this);
+    const auto sequence = std::make_shared<TransformationSequence>(shared_from_this());
     m_transformations.push_back(sequence);
 
     sequence->MoveToY(newY, duration, easing);
@@ -212,7 +213,7 @@ TransformationSequence& Drawable::MoveToY(float newY, double duration, Easing ea
 
 TransformationSequence& Drawable::ResizeTo(Vector2 newSize, double duration, Easing easing)
 {
-    const auto sequence = std::make_shared<TransformationSequence>(this);
+    const auto sequence = std::make_shared<TransformationSequence>(shared_from_this());
     m_transformations.push_back(sequence);
 
     sequence->ResizeTo(newSize, duration, easing);
@@ -222,7 +223,7 @@ TransformationSequence& Drawable::ResizeTo(Vector2 newSize, double duration, Eas
 
 TransformationSequence& Drawable::ResizeWidth(float newWidth, double duration, Easing easing)
 {
-    const auto sequence = std::make_shared<TransformationSequence>(this);
+    const auto sequence = std::make_shared<TransformationSequence>(shared_from_this());
     m_transformations.push_back(sequence);
 
     sequence->ResizeWidth(newWidth, duration, easing);
@@ -232,7 +233,7 @@ TransformationSequence& Drawable::ResizeWidth(float newWidth, double duration, E
 
 TransformationSequence& Drawable::ResizeHeight(float newHeight, double duration, Easing easing)
 {
-    const auto sequence = std::make_shared<TransformationSequence>(this);
+    const auto sequence = std::make_shared<TransformationSequence>(shared_from_this());
     m_transformations.push_back(sequence);
 
     sequence->ResizeHeight(newHeight, duration, easing);
@@ -242,7 +243,7 @@ TransformationSequence& Drawable::ResizeHeight(float newHeight, double duration,
 
 TransformationSequence& Drawable::ScaleTo(Vector2 newScale, double duration, Easing easing)
 {
-    const auto sequence = std::make_shared<TransformationSequence>(this);
+    const auto sequence = std::make_shared<TransformationSequence>(shared_from_this());
     m_transformations.push_back(sequence);
 
     sequence->ScaleTo(newScale, duration, easing);
@@ -252,7 +253,7 @@ TransformationSequence& Drawable::ScaleTo(Vector2 newScale, double duration, Eas
 
 TransformationSequence& Drawable::ScaleTo(float newScale, double duration, Easing easing)
 {
-    const auto sequence = std::make_shared<TransformationSequence>(this);
+    const auto sequence = std::make_shared<TransformationSequence>(shared_from_this());
     m_transformations.push_back(sequence);
 
     sequence->ScaleTo(newScale, duration, easing);
@@ -262,7 +263,7 @@ TransformationSequence& Drawable::ScaleTo(float newScale, double duration, Easin
 
 TransformationSequence& Drawable::FadeColor(::Color newColor, double duration, Easing easing)
 {
-    const auto sequence = std::make_shared<TransformationSequence>(this);
+    const auto sequence = std::make_shared<TransformationSequence>(shared_from_this());
     m_transformations.push_back(sequence);
 
     sequence->FadeColor(newColor, duration, easing);
@@ -272,7 +273,7 @@ TransformationSequence& Drawable::FadeColor(::Color newColor, double duration, E
 
 TransformationSequence& Drawable::FlashColor(::Color flashColor, double duration, Easing easing)
 {
-    const auto sequence = std::make_shared<TransformationSequence>(this);
+    const auto sequence = std::make_shared<TransformationSequence>(shared_from_this());
     m_transformations.push_back(sequence);
 
     sequence->FlashColor(flashColor, duration, easing);
@@ -282,7 +283,7 @@ TransformationSequence& Drawable::FlashColor(::Color flashColor, double duration
 
 TransformationSequence& Drawable::Delay(double delay)
 {
-    const auto sequence = std::make_shared<TransformationSequence>(this);
+    const auto sequence = std::make_shared<TransformationSequence>(std::shared_ptr<Drawable>(this));
     m_transformations.push_back(sequence);
 
     sequence->Delay(delay);

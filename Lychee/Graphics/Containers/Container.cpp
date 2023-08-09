@@ -6,14 +6,14 @@ void Container::LateLoad(const std::shared_ptr<DependencyContainer>& dependencyC
 {
     m_dependencyContainer = dependencyContainer;
 
-    for (Drawable* drawable : m_children)
+    for (const std::shared_ptr<Drawable>& drawable : m_children)
         if (drawable->GetLoadState() == LoadState::NotLoaded)
             drawable->Load(GetClock(), dependencyContainer);
 }
 
 void Container::UpdateClock(double deltaTime)
 {
-    for (Drawable* child : m_children)
+    for (const std::shared_ptr<Drawable>& child : m_children)
         if (child->GetLoadState() == LoadState::Loaded && !child->GetIsCustomClock())
             child->UpdateClock(deltaTime);
 
@@ -28,7 +28,7 @@ void Container::Update(bool handleInput)
             throw std::runtime_error("No axis can be relatively sized and automatically sized at the same time.");
 
         Vector2 maxSize;
-        for (Drawable* child : m_children)
+        for (const std::shared_ptr<Drawable>& child : m_children)
         {
             if ((child->RelativeSizeAxes & Axes::X) == Axes::None)
                 maxSize.X = std::max(child->GetDrawSize().X, maxSize.X);
@@ -58,7 +58,7 @@ void Container::Update(bool handleInput)
 
     Drawable::Update();
 
-    for (Drawable* drawable : m_children)
+    for (const std::shared_ptr<Drawable>& drawable : m_children)
         if (drawable->GetLoadState() == LoadState::Loaded)
             drawable->Update(handleInput && PassThroughInput);
 }
@@ -69,32 +69,29 @@ void Container::Draw()
 
     drawList->PushClipRect(GetDrawPosition().ToImVec2(), (GetDrawPosition() + GetDrawSize()).ToImVec2());
 
-    for (Drawable* drawable : m_children)
+    for (const std::shared_ptr<Drawable>& drawable : m_children)
         if (drawable->GetLoadState() == LoadState::Loaded)
             drawable->Draw();
 
     drawList->PopClipRect();
 }
 
-void Container::SetChildren(const std::vector<Drawable*>& children)
+void Container::SetChildren(const std::vector<std::shared_ptr<Drawable>>& children)
 {
-    for (const Drawable* drawable : m_children)
-        delete drawable;
-
     m_children = children;
 
-    for (Drawable* drawable : m_children)
+    for (const std::shared_ptr<Drawable>& drawable : m_children)
     {
-        drawable->Parent = this;
+        drawable->Parent = shared_from_this();
 
         if (GetLoadState() == LoadState::Loaded)
             drawable->Load(GetClock(), m_dependencyContainer);
     }
 }
 
-void Container::Add(Drawable* drawable)
+void Container::Add(const std::shared_ptr<Drawable>& drawable)
 {
-    drawable->Parent = this;
+    drawable->Parent = shared_from_this();
 
     if (GetLoadState() == LoadState::Loaded)
         drawable->Load(GetClock(), m_dependencyContainer);

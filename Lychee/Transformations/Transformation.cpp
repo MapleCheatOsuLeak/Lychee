@@ -155,7 +155,7 @@ double Transformation::interpolate(Easing easing, double time)
     return time;
 }
 
-Transformation::Transformation(Drawable* drawable, TransformationType type, Easing easing, double startTime, double endTime, float endFloat)
+Transformation::Transformation(const std::shared_ptr<Drawable>& drawable, TransformationType type, Easing easing, double startTime, double endTime, float endFloat)
 {
     m_drawable = drawable;
     m_type = type;
@@ -165,7 +165,7 @@ Transformation::Transformation(Drawable* drawable, TransformationType type, Easi
     m_endFloat = endFloat;
 }
 
-Transformation::Transformation(Drawable* drawable, TransformationType type, Easing easing, double startTime, double endTime, Vector2 endVector)
+Transformation::Transformation(const std::shared_ptr<Drawable>& drawable, TransformationType type, Easing easing, double startTime, double endTime, Vector2 endVector)
 {
     m_drawable = drawable;
     m_type = type;
@@ -175,7 +175,7 @@ Transformation::Transformation(Drawable* drawable, TransformationType type, Easi
     m_endVector = endVector;
 }
 
-Transformation::Transformation(Drawable* drawable, TransformationType type, Easing easing, double startTime, double endTime, Color endColor)
+Transformation::Transformation(const std::shared_ptr<Drawable>& drawable, TransformationType type, Easing easing, double startTime, double endTime, Color endColor)
 {
     m_drawable = drawable;
     m_type = type;
@@ -211,87 +211,92 @@ void Transformation::Apply(double time)
     const double remaining = m_endTime - time;
     const auto t = std::max(0.f, std::min(1.f, static_cast<float>(interpolate(m_easing, 1. - remaining / duration))));
 
-    switch (m_type)
+    if (const std::shared_ptr<Drawable> drawable = m_drawable.lock())
     {
-        case TransformationType::Alpha:
-            if (!m_applied)
-                m_startFloat = m_drawable->Alpha;
+        switch (m_type)
+        {
+            case TransformationType::Alpha:
+                if (!m_applied)
+                    m_startFloat = drawable->Alpha;
 
-            m_drawable->Alpha = m_startFloat + t * (m_endFloat - m_startFloat);
-            break;
-        case TransformationType::Position:
-            if (!m_applied)
-                m_startVector = m_drawable->Position;
-
-            m_drawable->Position = {m_startVector.X + t * (m_endVector.X - m_startVector.X), m_startVector.Y + t * (m_endVector.Y - m_startVector.Y)};
-            break;
-        case TransformationType::PositionOffset:
-            if (!m_applied)
-            {
-                m_startVector = m_drawable->Position;
-                m_endPositionOffset = m_startVector + m_endVector;
-            }
-
-            m_drawable->Position = {m_startVector.X + t * (m_endPositionOffset.X - m_startVector.X), m_startVector.Y + t * (m_endPositionOffset.Y - m_startVector.Y)};
-            break;
-        case TransformationType::PositionX:
-            if (!m_applied)
-                m_startFloat = m_drawable->Position.X;
-
-            m_drawable->Position = Vector2(m_startFloat + t * (m_endFloat - m_startFloat), m_drawable->Position.Y);
-            break;
-        case TransformationType::PositionY:
-            if (!m_applied)
-                m_startFloat = m_drawable->Position.Y;
-
-            m_drawable->Position = Vector2(m_drawable->Position.X, m_startFloat + t * (m_endFloat - m_startFloat));
-            break;
-        case TransformationType::Size:
-            if (!m_applied)
-                m_startVector = m_drawable->Size;
-
-            m_drawable->Size = {m_startVector.X + t * (m_endVector.X - m_startVector.X), m_startVector.Y + t * (m_endVector.Y - m_startVector.Y)};
-            break;
-        case TransformationType::SizeWidth:
-            if (!m_applied)
-                m_startFloat = m_drawable->Size.X;
-
-            m_drawable->Size = Vector2(m_startFloat + t * (m_endFloat - m_startFloat), m_drawable->Size.Y);
-            break;
-        case TransformationType::SizeHeight:
-            if (!m_applied)
-                m_startFloat = m_drawable->Size.Y;
-
-            m_drawable->Size = Vector2(m_drawable->Size.X, m_startFloat + t * (m_endFloat - m_startFloat));
-            break;
-        case TransformationType::Scale:
-            if (!m_applied)
-                m_startVector = m_drawable->Scale;
-
-            m_drawable->Scale = {m_startVector.X + t * (m_endVector.X - m_startVector.X), m_startVector.Y + t * (m_endVector.Y - m_startVector.Y)};
-            break;
-        case TransformationType::Color:
-            if (!m_applied)
-                m_startColor = m_drawable->Color;
-
-            m_drawable->Color = {static_cast<uint8_t>(m_startColor.R + t * (m_endColor.R - m_startColor.R)),
-                                 static_cast<uint8_t>(m_startColor.G + t * (m_endColor.G - m_startColor.G)),
-                                 static_cast<uint8_t>(m_startColor.B + t * (m_endColor.B - m_startColor.B)),
-                                 static_cast<uint8_t>(m_startColor.A + t * (m_endColor.A - m_startColor.A))};
-            break;
-        case TransformationType::FlashColor:
-            if (!m_applied)
-            {
-                m_startColor = m_drawable->Color;
-                m_drawable->Color = m_endColor;
+                drawable->Alpha = m_startFloat + t * (m_endFloat - m_startFloat);
                 break;
-            }
+            case TransformationType::Position:
+                if (!m_applied)
+                    m_startVector = drawable->Position;
 
-            m_drawable->Color = {static_cast<uint8_t>(m_endColor.R + t * (m_startColor.R - m_endColor.R)),
-                                 static_cast<uint8_t>(m_endColor.G + t * (m_startColor.G - m_endColor.G)),
-                                 static_cast<uint8_t>(m_endColor.B + t * (m_startColor.B - m_endColor.B)),
-                                 static_cast<uint8_t>(m_endColor.A + t * (m_startColor.A - m_endColor.A))};
-            break;
+                drawable->Position = {m_startVector.X + t * (m_endVector.X - m_startVector.X),
+                                      m_startVector.Y + t * (m_endVector.Y - m_startVector.Y)};
+                break;
+            case TransformationType::PositionOffset:
+                if (!m_applied)
+                {
+                    m_startVector = drawable->Position;
+                    m_endPositionOffset = m_startVector + m_endVector;
+                }
+
+                drawable->Position = {m_startVector.X + t * (m_endPositionOffset.X - m_startVector.X),
+                                      m_startVector.Y + t * (m_endPositionOffset.Y - m_startVector.Y)};
+                break;
+            case TransformationType::PositionX:
+                if (!m_applied)
+                    m_startFloat = drawable->Position.X;
+
+                drawable->Position = Vector2(m_startFloat + t * (m_endFloat - m_startFloat), drawable->Position.Y);
+                break;
+            case TransformationType::PositionY:
+                if (!m_applied)
+                    m_startFloat = drawable->Position.Y;
+
+                drawable->Position = Vector2(drawable->Position.X, m_startFloat + t * (m_endFloat - m_startFloat));
+                break;
+            case TransformationType::Size:
+                if (!m_applied)
+                    m_startVector = drawable->Size;
+
+                drawable->Size = {m_startVector.X + t * (m_endVector.X - m_startVector.X), m_startVector.Y + t * (m_endVector.Y - m_startVector.Y)};
+                break;
+            case TransformationType::SizeWidth:
+                if (!m_applied)
+                    m_startFloat = drawable->Size.X;
+
+                drawable->Size = Vector2(m_startFloat + t * (m_endFloat - m_startFloat), drawable->Size.Y);
+                break;
+            case TransformationType::SizeHeight:
+                if (!m_applied)
+                    m_startFloat = drawable->Size.Y;
+
+                drawable->Size = Vector2(drawable->Size.X, m_startFloat + t * (m_endFloat - m_startFloat));
+                break;
+            case TransformationType::Scale:
+                if (!m_applied)
+                    m_startVector = drawable->Scale;
+
+                drawable->Scale = {m_startVector.X + t * (m_endVector.X - m_startVector.X), m_startVector.Y + t * (m_endVector.Y - m_startVector.Y)};
+                break;
+            case TransformationType::Color:
+                if (!m_applied)
+                    m_startColor = drawable->Color;
+
+                drawable->Color = {static_cast<uint8_t>(m_startColor.R + t * (m_endColor.R - m_startColor.R)),
+                                   static_cast<uint8_t>(m_startColor.G + t * (m_endColor.G - m_startColor.G)),
+                                   static_cast<uint8_t>(m_startColor.B + t * (m_endColor.B - m_startColor.B)),
+                                   static_cast<uint8_t>(m_startColor.A + t * (m_endColor.A - m_startColor.A))};
+                break;
+            case TransformationType::FlashColor:
+                if (!m_applied)
+                {
+                    m_startColor = drawable->Color;
+                    drawable->Color = m_endColor;
+                    break;
+                }
+
+                drawable->Color = {static_cast<uint8_t>(m_endColor.R + t * (m_startColor.R - m_endColor.R)),
+                                   static_cast<uint8_t>(m_endColor.G + t * (m_startColor.G - m_endColor.G)),
+                                   static_cast<uint8_t>(m_endColor.B + t * (m_startColor.B - m_endColor.B)),
+                                   static_cast<uint8_t>(m_endColor.A + t * (m_startColor.A - m_endColor.A))};
+                break;
+        }
     }
 
     m_applied = true;

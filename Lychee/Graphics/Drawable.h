@@ -17,7 +17,7 @@ class TransformationSequence;
 /**
  * \brief Drawables are the basic components in Lychee. Anything that is visible or interactable has to be a drawable.
  */
-class Drawable
+class Drawable : public std::enable_shared_from_this<Drawable>
 {
     LoadState m_loadState = LoadState::NotLoaded;
     std::shared_ptr<Clock> m_clock;
@@ -27,7 +27,7 @@ class Drawable
     Vector2 m_drawSize;
     Vector2 m_drawScale;
     Color m_drawColor;
-    float m_drawAlpha;
+    float m_drawAlpha = 0.f;
     std::vector<std::shared_ptr<TransformationSequence>> m_transformations = {};
     bool m_isHovered = false;
 
@@ -44,7 +44,7 @@ public:
     /**
      * \brief The parent of this drawable.
      */
-    Drawable* Parent = nullptr;
+    std::weak_ptr<Drawable> Parent;
     /**
      * \brief Positional offset of this drawable's origin in its parent's coordinate system.
      */

@@ -15,7 +15,7 @@ class LycheeContext
     std::shared_ptr<InputManager> m_inputManager;
     std::shared_ptr<FontStorage> m_fontStorage;
 
-    std::vector<Drawable*> m_content = {};
+    std::vector<std::shared_ptr<Drawable>> m_content = {};
 public:
     LycheeContext();
 
@@ -23,6 +23,6 @@ public:
 
     void Update();
     void Draw();
-    void Add(Drawable* drawable);
-    void AddRange(std::initializer_list<Drawable*> drawables);
+    void Add(const std::shared_ptr<Drawable>& drawable);
+    void AddRange(std::initializer_list<std::shared_ptr<Drawable>> drawables);
 };

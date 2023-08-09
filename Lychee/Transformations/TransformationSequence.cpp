@@ -2,14 +2,18 @@
 
 #include "../Graphics/Drawable.h"
 
-TransformationSequence::TransformationSequence(Drawable* drawable)
+TransformationSequence::TransformationSequence(const std::shared_ptr<Drawable>& drawable)
 {
     m_drawable = drawable;
 }
 
 void TransformationSequence::ApplyTransformations()
 {
-    const double time = m_drawable->GetClock()->GetTime();
+    const std::shared_ptr<Drawable> drawable = m_drawable.lock();
+    if (!drawable || drawable->GetLoadState() != LoadState::Loaded)
+        return;
+
+    const double time = drawable->GetClock()->GetTime();
 
     for (const std::shared_ptr<Transformation>& transformation : m_sequence)
         transformation->Apply(time);
@@ -23,7 +27,11 @@ void TransformationSequence::FinishTransformations()
 
 TransformationSequence& TransformationSequence::FadeIn(double duration, Easing easing)
 {
-    const double startTime = std::max((m_drawable->GetLoadState() == LoadState::Loaded ? m_drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
+    const std::shared_ptr<Drawable> drawable = m_drawable.lock();
+    if (!drawable)
+        return *this;
+
+    const double startTime = std::max((drawable->GetLoadState() == LoadState::Loaded ? drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
     const double endTime = startTime + duration;
 
     if (startTime < m_minStartTime)
@@ -35,7 +43,7 @@ TransformationSequence& TransformationSequence::FadeIn(double duration, Easing e
     m_delay = 0;
     m_nextMinimumStartTime = 0.;
 
-    const auto transformation = std::make_shared<Transformation>(m_drawable, TransformationType::Alpha, easing, startTime, endTime, 1.f);
+    const auto transformation = std::make_shared<Transformation>(drawable, TransformationType::Alpha, easing, startTime, endTime, 1.f);
     m_sequence.push_back(transformation);
 
     return *this;
@@ -43,7 +51,11 @@ TransformationSequence& TransformationSequence::FadeIn(double duration, Easing e
 
 TransformationSequence& TransformationSequence::FadeOut(double duration, Easing easing)
 {
-    const double startTime = std::max((m_drawable->GetLoadState() == LoadState::Loaded ? m_drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
+    const std::shared_ptr<Drawable> drawable = m_drawable.lock();
+    if (!drawable)
+        return *this;
+
+    const double startTime = std::max((drawable->GetLoadState() == LoadState::Loaded ? drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
     const double endTime = startTime + duration;
 
     if (startTime < m_minStartTime)
@@ -55,7 +67,7 @@ TransformationSequence& TransformationSequence::FadeOut(double duration, Easing 
     m_delay = 0;
     m_nextMinimumStartTime = 0.;
 
-    const auto transformation = std::make_shared<Transformation>(m_drawable, TransformationType::Alpha, easing, startTime, endTime, 0.f);
+    const auto transformation = std::make_shared<Transformation>(drawable, TransformationType::Alpha, easing, startTime, endTime, 0.f);
     m_sequence.push_back(transformation);
 
     return *this;
@@ -63,7 +75,11 @@ TransformationSequence& TransformationSequence::FadeOut(double duration, Easing 
 
 TransformationSequence& TransformationSequence::FadeTo(float newAlpha, double duration, Easing easing)
 {
-    const double startTime = std::max((m_drawable->GetLoadState() == LoadState::Loaded ? m_drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
+    const std::shared_ptr<Drawable> drawable = m_drawable.lock();
+    if (!drawable)
+        return *this;
+
+    const double startTime = std::max((drawable->GetLoadState() == LoadState::Loaded ? drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
     const double endTime = startTime + duration;
 
     if (startTime < m_minStartTime)
@@ -75,7 +91,7 @@ TransformationSequence& TransformationSequence::FadeTo(float newAlpha, double du
     m_delay = 0;
     m_nextMinimumStartTime = 0.;
 
-    const auto transformation = std::make_shared<Transformation>(m_drawable, TransformationType::Alpha, easing, startTime, endTime, newAlpha);
+    const auto transformation = std::make_shared<Transformation>(drawable, TransformationType::Alpha, easing, startTime, endTime, newAlpha);
     m_sequence.push_back(transformation);
 
     return *this;
@@ -83,7 +99,11 @@ TransformationSequence& TransformationSequence::FadeTo(float newAlpha, double du
 
 TransformationSequence& TransformationSequence::FadeInFromZero(double duration, Easing easing)
 {
-    const double startTime = std::max((m_drawable->GetLoadState() == LoadState::Loaded ? m_drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
+    const std::shared_ptr<Drawable> drawable = m_drawable.lock();
+    if (!drawable)
+        return *this;
+
+    const double startTime = std::max((drawable->GetLoadState() == LoadState::Loaded ? drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
     const double endTime = startTime + duration;
 
     if (startTime < m_minStartTime)
@@ -95,10 +115,10 @@ TransformationSequence& TransformationSequence::FadeInFromZero(double duration, 
     m_delay = 0;
     m_nextMinimumStartTime = 0.;
 
-    const auto fadeOutTransformation = std::make_shared<Transformation>(m_drawable, TransformationType::Alpha, easing, startTime, startTime, 0.f);
+    const auto fadeOutTransformation = std::make_shared<Transformation>(drawable, TransformationType::Alpha, easing, startTime, startTime, 0.f);
     m_sequence.push_back(fadeOutTransformation);
 
-    const auto transformation = std::make_shared<Transformation>(m_drawable, TransformationType::Alpha, easing, startTime, endTime, 1.f);
+    const auto transformation = std::make_shared<Transformation>(drawable, TransformationType::Alpha, easing, startTime, endTime, 1.f);
     m_sequence.push_back(transformation);
 
     return *this;
@@ -106,7 +126,11 @@ TransformationSequence& TransformationSequence::FadeInFromZero(double duration, 
 
 TransformationSequence& TransformationSequence::FadeOutFromOne(double duration, Easing easing)
 {
-    const double startTime = std::max((m_drawable->GetLoadState() == LoadState::Loaded ? m_drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
+    const std::shared_ptr<Drawable> drawable = m_drawable.lock();
+    if (!drawable)
+        return *this;
+
+    const double startTime = std::max((drawable->GetLoadState() == LoadState::Loaded ? drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
     const double endTime = startTime + duration;
 
     if (startTime < m_minStartTime)
@@ -118,10 +142,10 @@ TransformationSequence& TransformationSequence::FadeOutFromOne(double duration, 
     m_delay = 0;
     m_nextMinimumStartTime = 0.;
 
-    const auto fadeInTransformation = std::make_shared<Transformation>(m_drawable, TransformationType::Alpha, easing, startTime, startTime, 1.f);
+    const auto fadeInTransformation = std::make_shared<Transformation>(drawable, TransformationType::Alpha, easing, startTime, startTime, 1.f);
     m_sequence.push_back(fadeInTransformation);
 
-    const auto transformation = std::make_shared<Transformation>(m_drawable, TransformationType::Alpha, easing, startTime, endTime, 0.f);
+    const auto transformation = std::make_shared<Transformation>(drawable, TransformationType::Alpha, easing, startTime, endTime, 0.f);
     m_sequence.push_back(transformation);
 
     return *this;
@@ -129,7 +153,11 @@ TransformationSequence& TransformationSequence::FadeOutFromOne(double duration, 
 
 TransformationSequence& TransformationSequence::MoveTo(Vector2 newPosition, double duration, Easing easing)
 {
-    const double startTime = std::max((m_drawable->GetLoadState() == LoadState::Loaded ? m_drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
+    const std::shared_ptr<Drawable> drawable = m_drawable.lock();
+    if (!drawable)
+        return *this;
+
+    const double startTime = std::max((drawable->GetLoadState() == LoadState::Loaded ? drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
     const double endTime = startTime + duration;
 
     if (startTime < m_minStartTime)
@@ -141,7 +169,7 @@ TransformationSequence& TransformationSequence::MoveTo(Vector2 newPosition, doub
     m_delay = 0;
     m_nextMinimumStartTime = 0.;
 
-    const auto transformation = std::make_shared<Transformation>(m_drawable, TransformationType::Position, easing, startTime, endTime, newPosition);
+    const auto transformation = std::make_shared<Transformation>(drawable, TransformationType::Position, easing, startTime, endTime, newPosition);
     m_sequence.push_back(transformation);
 
     return *this;
@@ -149,7 +177,11 @@ TransformationSequence& TransformationSequence::MoveTo(Vector2 newPosition, doub
 
 TransformationSequence& TransformationSequence::MoveToOffset(Vector2 offset, double duration, Easing easing)
 {
-    const double startTime = std::max((m_drawable->GetLoadState() == LoadState::Loaded ? m_drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
+    const std::shared_ptr<Drawable> drawable = m_drawable.lock();
+    if (!drawable)
+        return *this;
+
+    const double startTime = std::max((drawable->GetLoadState() == LoadState::Loaded ? drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
     const double endTime = startTime + duration;
 
     if (startTime < m_minStartTime)
@@ -161,7 +193,7 @@ TransformationSequence& TransformationSequence::MoveToOffset(Vector2 offset, dou
     m_delay = 0;
     m_nextMinimumStartTime = 0.;
 
-    const auto transformation = std::make_shared<Transformation>(m_drawable, TransformationType::PositionOffset, easing, startTime, endTime, offset);
+    const auto transformation = std::make_shared<Transformation>(drawable, TransformationType::PositionOffset, easing, startTime, endTime, offset);
     m_sequence.push_back(transformation);
 
     return *this;
@@ -169,7 +201,11 @@ TransformationSequence& TransformationSequence::MoveToOffset(Vector2 offset, dou
 
 TransformationSequence& TransformationSequence::MoveToX(float newX, double duration, Easing easing)
 {
-    const double startTime = std::max((m_drawable->GetLoadState() == LoadState::Loaded ? m_drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
+    const std::shared_ptr<Drawable> drawable = m_drawable.lock();
+    if (!drawable)
+        return *this;
+
+    const double startTime = std::max((drawable->GetLoadState() == LoadState::Loaded ? drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
     const double endTime = startTime + duration;
 
     if (startTime < m_minStartTime)
@@ -181,7 +217,7 @@ TransformationSequence& TransformationSequence::MoveToX(float newX, double durat
     m_delay = 0;
     m_nextMinimumStartTime = 0.;
 
-    const auto transformation = std::make_shared<Transformation>(m_drawable, TransformationType::PositionX, easing, startTime, endTime, newX);
+    const auto transformation = std::make_shared<Transformation>(drawable, TransformationType::PositionX, easing, startTime, endTime, newX);
     m_sequence.push_back(transformation);
 
     return *this;
@@ -189,7 +225,11 @@ TransformationSequence& TransformationSequence::MoveToX(float newX, double durat
 
 TransformationSequence& TransformationSequence::MoveToY(float newY, double duration, Easing easing)
 {
-    const double startTime = std::max((m_drawable->GetLoadState() == LoadState::Loaded ? m_drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
+    const std::shared_ptr<Drawable> drawable = m_drawable.lock();
+    if (!drawable)
+        return *this;
+
+    const double startTime = std::max((drawable->GetLoadState() == LoadState::Loaded ? drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
     const double endTime = startTime + duration;
 
     if (startTime < m_minStartTime)
@@ -201,7 +241,7 @@ TransformationSequence& TransformationSequence::MoveToY(float newY, double durat
     m_delay = 0;
     m_nextMinimumStartTime = 0.;
 
-    const auto transformation = std::make_shared<Transformation>(m_drawable, TransformationType::PositionY, easing, startTime, endTime, newY);
+    const auto transformation = std::make_shared<Transformation>(drawable, TransformationType::PositionY, easing, startTime, endTime, newY);
     m_sequence.push_back(transformation);
 
     return *this;
@@ -209,7 +249,11 @@ TransformationSequence& TransformationSequence::MoveToY(float newY, double durat
 
 TransformationSequence& TransformationSequence::ResizeTo(Vector2 newSize, double duration, Easing easing)
 {
-    const double startTime = std::max((m_drawable->GetLoadState() == LoadState::Loaded ? m_drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
+    const std::shared_ptr<Drawable> drawable = m_drawable.lock();
+    if (!drawable)
+        return *this;
+
+    const double startTime = std::max((drawable->GetLoadState() == LoadState::Loaded ? drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
     const double endTime = startTime + duration;
 
     if (startTime < m_minStartTime)
@@ -221,7 +265,7 @@ TransformationSequence& TransformationSequence::ResizeTo(Vector2 newSize, double
     m_delay = 0;
     m_nextMinimumStartTime = 0.;
 
-    const auto transformation = std::make_shared<Transformation>(m_drawable, TransformationType::Size, easing, startTime, endTime, newSize);
+    const auto transformation = std::make_shared<Transformation>(drawable, TransformationType::Size, easing, startTime, endTime, newSize);
     m_sequence.push_back(transformation);
 
     return *this;
@@ -229,7 +273,11 @@ TransformationSequence& TransformationSequence::ResizeTo(Vector2 newSize, double
 
 TransformationSequence& TransformationSequence::ResizeWidth(float newWidth, double duration, Easing easing)
 {
-    const double startTime = std::max((m_drawable->GetLoadState() == LoadState::Loaded ? m_drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
+    const std::shared_ptr<Drawable> drawable = m_drawable.lock();
+    if (!drawable)
+        return *this;
+
+    const double startTime = std::max((drawable->GetLoadState() == LoadState::Loaded ? drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
     const double endTime = startTime + duration;
 
     if (startTime < m_minStartTime)
@@ -241,7 +289,7 @@ TransformationSequence& TransformationSequence::ResizeWidth(float newWidth, doub
     m_delay = 0;
     m_nextMinimumStartTime = 0.;
 
-    const auto transformation = std::make_shared<Transformation>(m_drawable, TransformationType::SizeWidth, easing, startTime, endTime, newWidth);
+    const auto transformation = std::make_shared<Transformation>(drawable, TransformationType::SizeWidth, easing, startTime, endTime, newWidth);
     m_sequence.push_back(transformation);
 
     return *this;
@@ -249,7 +297,11 @@ TransformationSequence& TransformationSequence::ResizeWidth(float newWidth, doub
 
 TransformationSequence& TransformationSequence::ResizeHeight(float newHeight, double duration, Easing easing)
 {
-    const double startTime = std::max((m_drawable->GetLoadState() == LoadState::Loaded ? m_drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
+    const std::shared_ptr<Drawable> drawable = m_drawable.lock();
+    if (!drawable)
+        return *this;
+
+    const double startTime = std::max((drawable->GetLoadState() == LoadState::Loaded ? drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
     const double endTime = startTime + duration;
 
     if (startTime < m_minStartTime)
@@ -261,7 +313,7 @@ TransformationSequence& TransformationSequence::ResizeHeight(float newHeight, do
     m_delay = 0;
     m_nextMinimumStartTime = 0.;
 
-    const auto transformation = std::make_shared<Transformation>(m_drawable, TransformationType::SizeHeight, easing, startTime, endTime, newHeight);
+    const auto transformation = std::make_shared<Transformation>(drawable, TransformationType::SizeHeight, easing, startTime, endTime, newHeight);
     m_sequence.push_back(transformation);
 
     return *this;
@@ -269,7 +321,11 @@ TransformationSequence& TransformationSequence::ResizeHeight(float newHeight, do
 
 TransformationSequence& TransformationSequence::ScaleTo(Vector2 newScale, double duration, Easing easing)
 {
-    const double startTime = std::max((m_drawable->GetLoadState() == LoadState::Loaded ? m_drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
+    const std::shared_ptr<Drawable> drawable = m_drawable.lock();
+    if (!drawable)
+        return *this;
+
+    const double startTime = std::max((drawable->GetLoadState() == LoadState::Loaded ? drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
     const double endTime = startTime + duration;
 
     if (startTime < m_minStartTime)
@@ -281,7 +337,7 @@ TransformationSequence& TransformationSequence::ScaleTo(Vector2 newScale, double
     m_delay = 0;
     m_nextMinimumStartTime = 0.;
 
-    const auto transformation = std::make_shared<Transformation>(m_drawable, TransformationType::Scale, easing, startTime, endTime, newScale);
+    const auto transformation = std::make_shared<Transformation>(drawable, TransformationType::Scale, easing, startTime, endTime, newScale);
     m_sequence.push_back(transformation);
 
     return *this;
@@ -294,7 +350,11 @@ TransformationSequence& TransformationSequence::ScaleTo(float newScale, double d
 
 TransformationSequence& TransformationSequence::FadeColor(Color newColor, double duration, Easing easing)
 {
-    const double startTime = std::max((m_drawable->GetLoadState() == LoadState::Loaded ? m_drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
+    const std::shared_ptr<Drawable> drawable = m_drawable.lock();
+    if (!drawable)
+        return *this;
+
+    const double startTime = std::max((drawable->GetLoadState() == LoadState::Loaded ? drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
     const double endTime = startTime + duration;
 
     if (startTime < m_minStartTime)
@@ -306,7 +366,7 @@ TransformationSequence& TransformationSequence::FadeColor(Color newColor, double
     m_delay = 0;
     m_nextMinimumStartTime = 0.;
 
-    const auto transformation = std::make_shared<Transformation>(m_drawable, TransformationType::Color, easing, startTime, endTime, newColor);
+    const auto transformation = std::make_shared<Transformation>(drawable, TransformationType::Color, easing, startTime, endTime, newColor);
     m_sequence.push_back(transformation);
 
     return *this;
@@ -314,7 +374,11 @@ TransformationSequence& TransformationSequence::FadeColor(Color newColor, double
 
 TransformationSequence& TransformationSequence::FlashColor(Color flashColor, double duration, Easing easing)
 {
-    const double startTime = std::max((m_drawable->GetLoadState() == LoadState::Loaded ? m_drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
+    const std::shared_ptr<Drawable> drawable = m_drawable.lock();
+    if (!drawable)
+        return *this;
+
+    const double startTime = std::max((drawable->GetLoadState() == LoadState::Loaded ? drawable->GetClock()->GetTime() : 0.), m_nextMinimumStartTime);
     const double endTime = startTime + duration;
 
     if (startTime < m_minStartTime)
@@ -326,7 +390,7 @@ TransformationSequence& TransformationSequence::FlashColor(Color flashColor, dou
     m_delay = 0;
     m_nextMinimumStartTime = 0.;
 
-    const auto transformation = std::make_shared<Transformation>(m_drawable, TransformationType::FlashColor, easing, startTime, endTime, flashColor);
+    const auto transformation = std::make_shared<Transformation>(drawable, TransformationType::FlashColor, easing, startTime, endTime, flashColor);
     m_sequence.push_back(transformation);
 
     return *this;

@@ -25,7 +25,7 @@ void LycheeContext::Update()
     const auto deltaTime = static_cast<double>(ImGui::GetIO().DeltaTime) * 1000.;
     m_globalClock->Update(deltaTime);
 
-    for (Drawable* drawable : m_content)
+    for (const std::shared_ptr<Drawable>& drawable : m_content)
     {
         if (drawable->GetLoadState() != LoadState::Loaded)
             continue;
@@ -39,12 +39,12 @@ void LycheeContext::Update()
 
 void LycheeContext::Draw()
 {
-    for (Drawable* drawable : m_content)
+    for (const std::shared_ptr<Drawable>& drawable : m_content)
         if (drawable->GetLoadState() == LoadState::Loaded)
             drawable->Draw();
 }
 
-void LycheeContext::Add(Drawable* drawable)
+void LycheeContext::Add(const std::shared_ptr<Drawable>& drawable)
 {
     if (drawable->GetLoadState() == LoadState::NotLoaded)
         drawable->Load(m_globalClock, m_dependencyContainer);
@@ -52,7 +52,7 @@ void LycheeContext::Add(Drawable* drawable)
     m_content.push_back(drawable);
 }
 
-void LycheeContext::AddRange(std::initializer_list<Drawable*> drawables)
+void LycheeContext::AddRange(std::initializer_list<std::shared_ptr<Drawable>> drawables)
 {
     for (const auto drawable : drawables)
         if (drawable->GetLoadState() == LoadState::NotLoaded)
